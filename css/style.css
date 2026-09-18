@@ -2,8 +2,25 @@
     background-color: #343c4837;
 }
 
-#3d-container{
+.model-slot {
     width: 100%;
-    height: 500px;
+    height: 600px;
     position: relative;
+    background-color: #0d1117;
+}
+
+.model-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@media (max-width: 767px) {
+    .model-slot {
+        height: min(72vw, 360px);
+        min-height: 240px;
+    }
 }
