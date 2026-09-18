@@ -11,6 +11,7 @@ const DEFAULT_LIGHTING = {
     ]
 };
 
+// Vertex and fragment shaders for the mascot
 const MASCOT_VERTEX_SHADER = `
 uniform vec3 uTranslate;
 varying vec2 vUv;
@@ -164,7 +165,7 @@ function shaderColorFromHex(hex) {
     );
 }
 
-class ModelStage {
+export class ModelStage {
     constructor() {
         this.items = [];
         this.modelCache = new Map();
@@ -506,63 +507,3 @@ class InteractiveModel {
         this.model.rotation.x += (targetRotationX - this.model.rotation.x) * smoothing;
     }
 }
-
-// Add another config with a unique container ID to show more models at once.
-const catConfig = {
-    containerID: '3d-container',
-    modelURL: 'assets/cat-53c4522f687c1719.glb',
-    shaderProfile: 'githubMascot',
-    mascotType: 0,
-    scale: 2.0,
-    positionY: -1.0,
-    headHeight: 0.8,
-    degreesHorizontal: 20,
-    degreesVerticalUp: 25,
-    degreesVerticalDown: 15,
-    sensitivity: 1.2,
-    rotationSpeed: 0.03,
-    invertHorizontal: false,
-    invertVertical: true,
-    offsetMouseY: -220,
-
-    exposure: 1.5,
-
-    defaultMaterial: {
-        color: 0xffffff,
-        roughness: 0.65,
-        metalness: 0,
-        clearcoat: 0
-    },
-
-    materials: {
-        head: {
-            color: 0xf763c1,
-            aoMap: 'assets/head_sss-29270cf59da664ea.jpg',
-            matcapMap: 'assets/mascot-7c495cf9822e0d5c.jpg'
-        },
-        face: {
-            color: 0xff8fd6,
-            aoMap: 'assets/head_sss-29270cf59da664ea.jpg',
-            matcapMap: 'assets/mascot-7c495cf9822e0d5c.jpg'
-        },
-        eyeball: {
-            color: 0xffffff,
-            aoMap: 'assets/head_sss-29270cf59da664ea.jpg',
-            matcapMap: 'assets/mascot-7c495cf9822e0d5c.jpg'
-        },
-        eye: {
-            color: 0x000000,
-            aoMap: 'assets/eye_sss-8e43fcedfb9ddaf9.jpg',
-            colorMap: 'assets/eye_color-bb27e609004c77cc.jpg',
-            matcapMap: 'assets/cat_eye-75fdf7af6c5dc157.jpg'
-        },
-        nose: {
-            color: 0x000000,
-            aoMap: 'assets/head_sss-29270cf59da664ea.jpg',
-            matcapMap: 'assets/mascot-7c495cf9822e0d5c.jpg'
-        }
-    }
-};
-
-const stage = new ModelStage();
-stage.add(catConfig);
