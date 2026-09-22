@@ -1,4 +1,13 @@
+@font-face {
+    font-family: 'Mona Sans';
+    src: url('../assets/MonaSansVF-wdth-wght-opsz-7a868ff47c93bd97.woff2') format('woff2');
+    font-weight: 200 900;
+    font-stretch: 75% 125%;
+    font-display: swap;
+}
+
 .body{
+    font-family: 'Mona Sans', system-ui, -apple-system, sans-serif !important;
     background-color: #343c4837;
 }
 
@@ -17,10 +26,21 @@
     pointer-events: none;
     z-index: 1;
 }
+.navbar {
+    font-family: 'Mona Sans', sans-serif !important;
+}
 
 @media (max-width: 767px) {
     .model-slot {
         height: min(72vw, 360px);
         min-height: 240px;
     }
+}
+
+.fw-custom-bold {
+  font-weight: 450 !important; /* Fuerza el grosor al máximo */
+}
+
+.f-custom-spacing{
+  letter-spacing: 0.3px !important; /* Ajusta el valor según tus necesidades */
 }
