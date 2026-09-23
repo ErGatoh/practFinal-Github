@@ -30,6 +30,160 @@
     font-family: 'Mona Sans', sans-serif !important;
 }
 
+@media (max-width: 991.98px) {
+    .navbar {
+        padding-block: 0.7rem !important;
+    }
+
+    .navbar > .container-fluid {
+        padding-inline: 1rem !important;
+    }
+
+    .mobile-navbar-header {
+        min-height: 2.625rem;
+    }
+
+    .mobile-menu-toggle {
+        width: 1.75rem;
+        aspect-ratio: 1;
+        padding: 0;
+        color: #ffffff;
+    }
+
+    .mobile-menu-toggle:focus {
+        box-shadow: none;
+    }
+
+    .mobile-menu-toggle morph-icon {
+        display: block;
+        width: 1.2rem;
+        height: 1.2rem;
+    }
+
+    .mobile-menu-toggle morph-icon svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .mobile-sign-in {
+        padding: 0.33rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    body.mobile-menu-open {
+        overflow: hidden;
+    }
+
+    body.mobile-menu-open .navbar {
+        position: fixed !important;
+        inset: 0;
+        height: 100dvh;
+        align-items: flex-start;
+        overflow-y: auto;
+        background-color: #000000 !important;
+    }
+
+    body.mobile-menu-open .navbar > .container-fluid {
+        align-content: flex-start;
+    }
+
+    #githubNavbar {
+        width: 100%;
+        flex-basis: 100%;
+        padding-top: 1rem;
+    }
+
+    body.mobile-menu-open #githubNavbar {
+        width: 100vw;
+        margin-top: 0.7rem;
+        margin-inline: calc(50% - 50vw);
+        padding-inline: 1rem;
+        background-color: #000000;
+        border-top: 2px solid #30363d;
+        border-radius: 20px;
+        box-sizing: border-box;
+    }
+
+    #githubNavbar .navbar-nav {
+        margin-bottom: 1rem !important;
+        padding-inline: 0 !important;
+        font-size: 1.297rem !important;
+        font-weight: 500 !important;
+    }
+
+    #githubNavbar .nav-item {
+        margin-right: 0 !important;
+    }
+
+    #githubNavbar .nav-link {
+        justify-content: space-between;
+        padding-block: 0.7rem;
+    }
+
+    #githubNavbar .nav-link svg {
+        flex: none;
+        margin-left: auto;
+        transform: rotate(-90deg);
+        transform-origin: center;
+    }
+
+    .mobile-navbar-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding-inline: 0 !important;
+        padding-bottom: 1.3rem;
+    }
+
+    .mobile-search {
+        width: 100%;
+        min-height: 2.15rem;
+        padding-block: 0.23rem;
+        color: #ffffff;
+        background-color: #000000;
+        border: 1px solid #262c28;
+        font-size: 0.86rem;
+        text-align: left;
+    }
+
+    .mobile-search:hover,
+    .mobile-search:focus {
+        color: #ffffff;
+        background-color: #292929;
+        border-color: #30363d;
+        box-shadow: none;
+    }
+
+    .mobile-search-shortcut-frame {
+        width: 1.55rem;
+        height: 1.55rem;
+        flex: none;
+        color: #ffffff;
+        border: 1px solid #262c28;
+        border-radius: 0.3rem;
+        pointer-events: none;
+    }
+
+    .mobile-search-shortcut {
+        flex: none;
+        color: #ffffff;
+        pointer-events: none;
+    }
+
+    .mobile-search:hover .mobile-search-shortcut-frame,
+    .mobile-search:focus .mobile-search-shortcut-frame {
+        color: #ffffff;
+        border-color: #353d37;
+    }
+
+    .mobile-sign-up {
+        min-height: 1.8rem;
+        padding-block: 0.23rem;
+        font-size: 0.85rem;
+    }
+}
+
 @media (max-width: 767px) {
     .model-slot {
         height: min(72vw, 360px);
