@@ -6,10 +6,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" href="assets/favicon-dark.png" type="image/x-icon">
 
-
+        <!-- Local styles -->
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
 
+        <!-- Runtime dependencies -->
         <script src="js/bootstrap.min.js"></script>
         <script type="importmap">
         {
@@ -20,8 +21,11 @@
             }
         }
         </script>
-        <script type="module" src="js/cat.js"></script>
+
+        <!-- Page modules -->
+        <script type="module" src="js/models.js"></script>
         <script type="module" src="js/navbar.js"></script>
+        <script type="module" src="js/hero.js"></script>
     </head>
     <body class="bg-dark text-light">
         <!-- GitHub-style navbar -->
@@ -121,27 +125,322 @@
 
                     <!-- Desktop search and account links -->
                     <div class="d-none d-lg-flex align-items-stretch ms-lg-3" style="gap: 9px;">
-                        <button class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center rounded-2" type="button" aria-label="Search" style="width: 42px; height: 32px; --bs-btn-color: #ffffff; --bs-btn-border-color: #262c28; --bs-btn-hover-color: #ffffff; --bs-btn-hover-bg: #484f58; --bs-btn-hover-border-color: #434343;">
+                        <button class="navbar-button btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center rounded-2" type="button" aria-label="Search" style="width: 42px; height: 32px; --bs-btn-color: #ffffff; --bs-btn-border-color: #262c28; --bs-btn-hover-color: #ffffff; --bs-btn-hover-bg: #484f58; --bs-btn-hover-border-color: #434343;">
                             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                                 <circle cx="10.5" cy="10.5" r="6.5"></circle>
                                 <path d="M15.5 15.5 20 20"></path>
                             </svg>
                         </button>
-                        <button class="btn btn-sm btn-outline-secondary text-nowrap fw-custom-bold rounded-2" type="button" style="width: 73px; height: 32px; --bs-btn-color: #ffffff; --bs-btn-border-color: #262c28; --bs-btn-hover-color: #ffffff; --bs-btn-hover-bg: #484f58; --bs-btn-hover-border-color: #434343; font-size: 14px;">Sign in</button>
-                        <button class="btn btn-sm btn-outline-secondary text-nowrap fw-custom-bold rounded-2" type="button" style="width: 78px; height: 32px; --bs-btn-color: #ffffff; --bs-btn-bg: #1f1f1f; --bs-btn-border-color: #2c2c2c; --bs-btn-hover-color: #ffffff; --bs-btn-hover-bg: #484f58; --bs-btn-hover-border-color: #434343; font-size: 14px;">Sign up</button>
+                        <button class=" navbar-button btn btn-sm btn-outline-secondary text-nowrap fw-custom-bold rounded-2" type="button" style="width: 73px; height: 32px; --bs-btn-color: #ffffff; --bs-btn-border-color: #262c28; --bs-btn-hover-color: #ffffff; --bs-btn-hover-bg: #484f58; --bs-btn-hover-border-color: #434343; font-size: 14px;">Sign in</button>
+                        <button class="navbar-sign-up btn btn-sm btn-outline-secondary text-nowrap fw-custom-bold rounded-2" type="button" style="width: 78px; height: 32px; --bs-btn-color: #ffffff; --bs-btn-bg: #1f1f1f; --bs-btn-border-color: #2c2c2c; --bs-btn-hover-color: #ffffff; --bs-btn-hover-bg: #484f58; --bs-btn-hover-border-color: #434343; font-size: 14px;">Sign up</button>
                     </div>
                 </div>
             </div>
         </nav>
 
+        <main>
+            <!-- Scroll-driven hero -->
+            <section class="hero-section position-relative overflow-hidden" id="hero">
+                <div class="hero-scroll-scene">
+                    <div class="hero-sticky-frame overflow-hidden">
+                        <!-- Glow and particle layers -->
+                        <div class="hero-glow" aria-hidden="true"></div>
+                        <div class="hero-particles hero-particles-back" aria-hidden="true"></div>
+                        <div class="hero-particles hero-particles-middle" aria-hidden="true"></div>
+                        <div class="hero-particles hero-particles-front" aria-hidden="true"></div>
 
-        <div class="container px-2">
-        <div class="row gx-2 align-items-center vh-100">
-            <div class="col-md-6">
-                <div id="3d-container" class="model-slot"></div>
+                        <!-- Idle hero mascots -->
+                        <div class="hero-models" aria-hidden="true">
+                            <div class="hero-model hero-model-cat" data-model="cat" data-model-scale="6" data-hero-model="cat"></div>
+                            <div class="hero-model hero-model-copilot" data-model="copilot" data-model-scale="6" data-hero-model="copilot"></div>
+                            <div class="hero-model hero-model-duck" data-model="duck" data-model-scale="9" data-hero-model="duck"></div>
+                        </div>
+
+                        <div class="container-xl position-relative h-100 px-3 px-md-4">
+                            <!-- Hero message and actions -->
+                            <div class="hero-copy mx-auto text-center">
+                                <h1 class="hero-title mb-4">The future of building<br class="d-none d-md-block"> happens together</h1>
+                                <p class="hero-description mx-auto mb-4">Tools and trends evolve, but collaboration endures. With GitHub,<br> developers, agents, and code come together on one platform.</p>
+                                <div class="hero-actions d-flex flex-column flex-lg-row justify-content-center gap-3 mx-auto">
+                                    <form class="signup-form d-flex flex-column flex-sm-row bg-white rounded-3 p-1" action="#" method="get">
+                                        <div class="form-floating flex-grow-1">
+                                            <input class="form-control border-0 shadow-none" id="heroEmail" name="email" type="email" placeholder="johndoe@gmail.com">
+                                            <label for="heroEmail">Enter your email</label>
+                                        </div>
+
+                                        <button class="btn btn-success text-nowrap fw-semibold px-4" id="heroSignupButton" type="submit">Sign up for GitHub</button>
+                                    </form>
+                                    <a class="btn btn-outline-light d-inline-flex align-items-center justify-content-center fw-semibold px-3" href="#">Download GitHub Copilot app</a>
+                                </div>
+                            </div>
+
+                            <!-- Video transition -->
+                            <div class="product-preview">
+                                <div class="preview-window overflow-hidden rounded-4">
+                                    <div class="preview-toolbar d-flex align-items-center gap-2 px-3 px-md-4">
+                                        <span></span><span></span><span></span>
+                                        <div class="preview-path ms-2">github / copilot-workspace</div>
+                                    </div>
+                                    <video class="preview-video d-none d-md-block" autoplay muted loop playsinline aria-label="GitHub Copilot code editor demonstration">
+                                        <source src="assets/code-1_desktop-6d44c7cb53b4aebb.mp4" type="video/mp4">
+                                    </video>
+                                    <video class="preview-video d-md-none" autoplay muted loop playsinline aria-label="GitHub Copilot code editor demonstration">
+                                        <source src="assets/code-1_mobile-56dc14fe27999221.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Future feature navigation hidden for now.
+                <div class="container-xl position-relative px-3 px-md-4">
+                    <div class="feature-tabs row row-cols-5 g-0 mx-auto text-center" aria-label="GitHub features">
+                        <div class="col"><span class="active">Code</span></div>
+                        <div class="col"><span>Plan</span></div>
+                        <div class="col"><span>Collaborate</span></div>
+                        <div class="col"><span>Automate</span></div>
+                        <div class="col"><span>Secure</span></div>
+                    </div>
+                    <p class="feature-summary mx-auto text-center mb-0">Write, test, and fix code quickly with GitHub Copilot, from simple boilerplate to complex features.</p>
+                </div>
+                -->
+            </section>
+
+            <!-- Future homepage sections hidden for now.
+            <section class="customer-strip py-5">
+                <div class="container-xl px-3 px-md-4">
+                    <p class="eyebrow text-center mb-4">GitHub customers</p>
+                    <div class="customer-logos d-grid text-center align-items-center">
+                        <span>American Airlines</span>
+                        <span>Duolingo</span>
+                        <span>Mercedes-Benz</span>
+                        <span>Shopify</span>
+                        <span>Spotify</span>
+                        <span>Vodafone</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section workflow-section">
+                <div class="container-xl px-3 px-md-4">
+                    <div class="section-heading row align-items-end g-4">
+                        <div class="col-lg-8">
+                            <p class="eyebrow mb-3">Productivity</p>
+                            <h2>Accelerate your entire workflow</h2>
+                        </div>
+                        <div class="col-lg-4">
+                            <p class="section-lead mb-0">From your first line of code to final deployment, GitHub provides AI and automation tools to help you build and ship better software faster.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-panel overflow-hidden rounded-4">
+                        <div class="row g-0 align-items-stretch">
+                            <div class="col-lg-5 p-4 p-md-5 d-flex flex-column justify-content-between">
+                                <div>
+                                    <span class="feature-icon mb-4" aria-hidden="true">&lt;/&gt;</span>
+                                    <h3>Your AI partner everywhere</h3>
+                                    <p>Copilot is ready to work with you at each step of the software development lifecycle.</p>
+                                </div>
+                                <a class="text-link" href="#">Explore GitHub Copilot <span aria-hidden="true">→</span></a>
+                            </div>
+                            <div class="col-lg-7">
+                                <div class="code-visual h-100 p-4 p-md-5">
+                                    <div class="code-card rounded-3 p-3 p-md-4">
+                                        <div class="d-flex gap-2 mb-4"><i></i><i></i><i></i></div>
+                                        <code><span>function</span> buildTogether(team) {<br>&nbsp;&nbsp;return team.map(developer =&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;developer.createWith(copilot)<br>&nbsp;&nbsp;);<br>}</code>
+                                        <div class="copilot-prompt mt-4 rounded-3 p-3">Ask Copilot to improve this code…</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-6 col-xl-3">
+                            <article class="mini-card h-100 rounded-4 p-4">
+                                <h3>Automate your path to production</h3>
+                                <p>Ship faster with secure, reliable CI/CD.</p>
+                                <a class="text-link" href="#">Explore GitHub Actions →</a>
+                            </article>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <article class="mini-card h-100 rounded-4 p-4">
+                                <h3>Code instantly from anywhere</h3>
+                                <p>Launch a full cloud development environment in seconds.</p>
+                                <a class="text-link" href="#">Explore Codespaces →</a>
+                            </article>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <article class="mini-card h-100 rounded-4 p-4">
+                                <h3>Keep momentum on the go</h3>
+                                <p>Manage projects and assign tasks from your mobile device.</p>
+                                <a class="text-link" href="#">Explore GitHub Mobile →</a>
+                            </article>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <article class="mini-card h-100 rounded-4 p-4">
+                                <h3>Shape your toolchain</h3>
+                                <p>Extend your stack with apps, actions, and AI models.</p>
+                                <a class="text-link" href="#">Explore Marketplace →</a>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section security-section">
+                <div class="container-xl px-3 px-md-4">
+                    <div class="section-heading row align-items-end g-4">
+                        <div class="col-lg-8">
+                            <p class="eyebrow mb-3">Application security</p>
+                            <h2>Built-in application security where found means fixed</h2>
+                        </div>
+                        <div class="col-lg-4">
+                            <p class="section-lead mb-0">Use AI to find and fix vulnerabilities so your team can ship more secure software faster.</p>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <article class="feature-panel security-visual h-100 rounded-4 p-4 p-md-5">
+                                <span class="status-pill d-inline-flex align-items-center gap-2 mb-4"><i></i> Copilot Autofix</span>
+                                <h3>Apply fixes in seconds.</h3>
+                                <p>Spend less time debugging and more time building features with AI-generated remediation suggestions.</p>
+                                <div class="security-code rounded-3 p-4 mt-5">
+                                    <div class="alert-row d-flex gap-3"><span>✓</span><div><strong>Suggested fix ready</strong><small class="d-block">Unsanitized input has been secured.</small></div></div>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="d-grid gap-3 h-100">
+                                <article class="mini-card rounded-4 p-4">
+                                    <h3>Security debt, solved</h3>
+                                    <p>Reduce application vulnerabilities with security campaigns and Copilot Autofix.</p>
+                                </article>
+                                <article class="mini-card rounded-4 p-4">
+                                    <h3>Your secrets, your business</h3>
+                                    <p>Detect, prevent, and remediate leaked secrets across your organization.</p>
+                                </article>
+                                <div class="stat-card rounded-4 p-4"><strong>8.3M</strong><span>secret leaks stopped in the past 12 months</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section collaboration-section">
+                <div class="container-xl px-3 px-md-4">
+                    <div class="section-heading row align-items-end g-4">
+                        <div class="col-lg-8">
+                            <p class="eyebrow mb-3">Collaboration</p>
+                            <h2>Work together, achieve more</h2>
+                        </div>
+                        <div class="col-lg-4">
+                            <p class="section-lead mb-0">From planning and discussion to code review, GitHub keeps your team’s conversation and context next to your code.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-panel rounded-4 overflow-hidden">
+                        <div class="row g-0 align-items-center">
+                            <div class="col-lg-5 p-4 p-md-5">
+                                <h3>Plan with clarity</h3>
+                                <p>Organize everything from high-level roadmaps to everyday tasks.</p>
+                                <a class="text-link" href="#">Explore GitHub Projects →</a>
+                            </div>
+                            <div class="col-lg-7 p-4 p-md-5 project-visual">
+                                <div class="project-table rounded-3 overflow-hidden">
+                                    <div class="project-row project-header"><span>Project roadmap</span><span>Status</span></div>
+                                    <div class="project-row"><span>Improve onboarding flow</span><span class="badge text-bg-success">Done</span></div>
+                                    <div class="project-row"><span>Ship mobile navigation</span><span class="badge text-bg-primary">In progress</span></div>
+                                    <div class="project-row"><span>Prepare public launch</span><span class="badge text-bg-secondary">Backlog</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-4"><article class="mini-card h-100 rounded-4 p-4"><h3>Keep track of your tasks</h3><p>Create issues and manage projects with tools that adapt to your code.</p></article></div>
+                        <div class="col-md-4"><article class="mini-card h-100 rounded-4 p-4"><h3>Share ideas and ask questions</h3><p>Create space for open-ended conversations alongside your project.</p></article></div>
+                        <div class="col-md-4"><article class="mini-card h-100 rounded-4 p-4"><h3>Review code changes together</h3><p>Assign initial reviews to Copilot for greater speed and quality.</p></article></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section stories-section">
+                <div class="container-xl px-3 px-md-4">
+                    <div class="section-heading text-center mx-auto">
+                        <p class="eyebrow mb-3">Customer stories</p>
+                        <h2>From startups to enterprises, GitHub scales with teams of any size in any industry.</h2>
+                    </div>
+                    <div class="story-filters d-flex flex-wrap justify-content-center gap-2 my-5">
+                        <button class="btn active" type="button">By industry</button>
+                        <button class="btn" type="button">By size</button>
+                        <button class="btn" type="button">By use case</button>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-4"><article class="story-card h-100 rounded-4 p-4 p-lg-5"><span>Technology</span><h3>Figma streamlines development and strengthens security.</h3><a class="text-link" href="#">Read customer story →</a></article></div>
+                        <div class="col-md-4"><article class="story-card h-100 rounded-4 p-4 p-lg-5"><span>Automotive</span><h3>Mercedes-Benz standardizes source code and automates onboarding.</h3><a class="text-link" href="#">Read customer story →</a></article></div>
+                        <div class="col-md-4"><article class="story-card h-100 rounded-4 p-4 p-lg-5"><span>Financial services</span><h3>Mercado Libre cuts coding time in half with GitHub.</h3><a class="text-link" href="#">Read customer story →</a></article></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="final-cta text-center position-relative overflow-hidden">
+                <div class="final-glow" aria-hidden="true"></div>
+                <div class="container-xl position-relative px-3 px-md-4">
+                    <h2 class="mx-auto">Millions of developers and businesses call GitHub home</h2>
+                    <p class="mx-auto">Whether you’re scaling your development process or just learning how to code, GitHub is where you belong.</p>
+                    <div class="hero-actions d-flex flex-column flex-lg-row justify-content-center gap-3 mx-auto">
+                        <form class="signup-form d-flex flex-column flex-sm-row bg-white rounded-3 p-1" action="#" method="get">
+                            <label class="visually-hidden" for="footerEmail">Enter your email</label>
+                            <input class="form-control border-0 shadow-none px-3" id="footerEmail" name="email" type="email" placeholder="Enter your email">
+                            <button class="btn btn-success text-nowrap fw-semibold px-4" type="submit">Sign up for GitHub</button>
+                        </form>
+                        <a class="btn btn-outline-light d-inline-flex align-items-center justify-content-center fw-semibold px-4" href="#">Download GitHub Copilot app</a>
+                    </div>
+                </div>
+            </section>
+            -->
+        </main>
+
+        <!-- Future footer hidden for now.
+        <footer class="site-footer">
+            <div class="container-xl px-3 px-md-4">
+                <div class="row g-5">
+                    <div class="col-lg-4">
+                        <a class="footer-brand d-inline-flex align-items-center gap-2 text-white text-decoration-none mb-4" href="#" aria-label="GitHub home">
+                            <svg height="32" aria-hidden="true" viewBox="0 0 16 16" width="32"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path></svg>
+                            <strong>GitHub</strong>
+                        </a>
+                        <h3>The developer newsletter</h3>
+                        <p>Get tips, technical guides, and best practices. Twice a month. Right in your inbox.</p>
+                        <a class="btn btn-outline-light" href="#">Subscribe</a>
+                    </div>
+                    <div class="col-6 col-md-3 col-lg-2">
+                        <h3>Platform</h3>
+                        <ul class="list-unstyled"><li><a href="#">Features</a></li><li><a href="#">Enterprise</a></li><li><a href="#">Copilot</a></li><li><a href="#">AI</a></li><li><a href="#">Security</a></li><li><a href="#">Pricing</a></li></ul>
+                    </div>
+                    <div class="col-6 col-md-3 col-lg-2">
+                        <h3>Ecosystem</h3>
+                        <ul class="list-unstyled"><li><a href="#">Developer API</a></li><li><a href="#">Partners</a></li><li><a href="#">Education</a></li><li><a href="#">GitHub CLI</a></li><li><a href="#">GitHub Desktop</a></li><li><a href="#">Marketplace</a></li></ul>
+                    </div>
+                    <div class="col-6 col-md-3 col-lg-2">
+                        <h3>Support</h3>
+                        <ul class="list-unstyled"><li><a href="#">Docs</a></li><li><a href="#">Community Forum</a></li><li><a href="#">Professional Services</a></li><li><a href="#">Premium Support</a></li><li><a href="#">Status</a></li><li><a href="#">Contact GitHub</a></li></ul>
+                    </div>
+                    <div class="col-6 col-md-3 col-lg-2">
+                        <h3>Company</h3>
+                        <ul class="list-unstyled"><li><a href="#">About</a></li><li><a href="#">Customer stories</a></li><li><a href="#">Blog</a></li><li><a href="#">Careers</a></li><li><a href="#">Inclusion</a></li><li><a href="#">Social Impact</a></li></ul>
+                    </div>
+                </div>
+                <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between gap-3 mt-5 pt-4">
+                    <div class="d-flex flex-wrap gap-3"><span>© 2026 GitHub, Inc.</span><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Manage cookies</a></div>
+                    <div class="d-flex gap-3"><a href="#">LinkedIn</a><a href="#">YouTube</a><a href="#">X</a></div>
+                </div>
             </div>
-        </div>
-    </div>
+        </footer>
+        -->
     </body>
 
 </html>

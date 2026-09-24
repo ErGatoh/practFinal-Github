@@ -1,9 +1,13 @@
-import { ModelStage } from './script.js';
-const catConfig = {
-    containerID: '3d-container',
+import { createMascotMaterial } from './mascot-material.js';
+
+// Cat appearance and pointer response.
+export const catConfig = {
     modelURL: 'assets/cat-53c4522f687c1719.glb',
-    shaderProfile: 'githubMascot',
+    createMaterial: createMascotMaterial,
     mascotType: 0,
+    useLights: false,
+    castShadow: false,
+    receiveShadow: false,
     scale: 2.0,
     positionY: -1.0,
     headHeight: 0.8,
@@ -54,6 +58,3 @@ const catConfig = {
         }
     }
 };
-
-const stage = new ModelStage();
-stage.add(catConfig);
