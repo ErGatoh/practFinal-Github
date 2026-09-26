@@ -54,7 +54,7 @@ export class ModelStage {
 
         window.addEventListener('pointermove', (event) => {
             const followsPointer = this.items.some((item) => (
-                item.visible && item.hasAction('follow-pointer')
+                item.visible && item.renderingEnabled && item.hasAction('follow-pointer')
             ));
             if (!followsPointer) return;
 
@@ -168,7 +168,9 @@ export class ModelStage {
     requestRender() {
         if (this.frameID !== null) return;
 
-        if (document.hidden || !this.items.some((item) => item.visible && item.model)) {
+        if (document.hidden || !this.items.some((item) => (
+            item.visible && item.renderingEnabled && item.model
+        ))) {
             this.clear();
             return;
         }
@@ -192,7 +194,7 @@ export class ModelStage {
         let keepRendering = false;
 
         for (const item of this.items) {
-            if (!item.visible || !item.model) continue;
+            if (!item.visible || !item.renderingEnabled || !item.model) continue;
 
             const rect = item.container.getBoundingClientRect();
             const clipLeft = Math.max(0, rect.left);
@@ -240,6 +242,7 @@ class InteractiveModel {
         this.actions = new Set(options.actions || []);
         this.pose = {};
         this.visible = false;
+        this.renderingEnabled = true;
         this.model = null;
         this.loadPromise = null;
         this.mouseNDC = new THREE.Vector2(0, 0);
@@ -266,6 +269,14 @@ class InteractiveModel {
             this.actions.delete(action);
         }
 
+        this.stage.requestRender();
+    }
+
+    // Suspend one instance without releasing its shared cached resources.
+    setRenderingEnabled(isEnabled) {
+        if (this.renderingEnabled === isEnabled) return;
+
+        this.renderingEnabled = isEnabled;
         this.stage.requestRender();
     }
 

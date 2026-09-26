@@ -34,15 +34,15 @@ export const duckConfig = {
             aoMap: 'assets/body_sss-ecb11ff73d84fd3b.jpg'
         },
         beak: {
-            color: 0xff8a36,
+            color: 0xf0bd2f,
             aoMap: 'assets/beak_sss-9bedb47fe065d769.jpg'
         },
         eyeballs: {
-            color: 0xffffff,
+            color: 0x050505,
             aoMap: 'assets/eyeballs_sss-d377e4858a74c681.jpg'
         },
         eyes: {
-            color: 0x111111,
+            color: 0x050505,
             aoMap: 'assets/eyes_sss-1cf5a161036fa333.jpg'
         }
     }

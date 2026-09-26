@@ -3,7 +3,7 @@ import { defineMorphIcon } from 'morphicons/element';
 // Icon paths and responsive limits.
 const MENU_ICON = 'M4 7h16M4 12h16M4 17h16';
 const CLOSE_ICON = 'M18 6 6 18M6 6l12 12';
-const DESKTOP_QUERY = '(min-width: 992px)';
+const DESKTOP_QUERY = '(min-width: 1100px)';
 const MENU_STROKE_WIDTH = '2';
 const CLOSE_STROKE_WIDTH = '1.5';
 

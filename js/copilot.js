@@ -7,8 +7,9 @@ const METAL_MATCAP = 'assets/metal-3c8c628f34ff880e.jpg';
 export const copilotConfig = {
     modelURL: 'assets/copilot-2addefe0e666acf2.glb',
     createMaterial: createMascotMaterial,
+    materialStyle: 'clean',
     mascotType: 1,
-    useLights: false,
+    useLights: true,
     castShadow: false,
     receiveShadow: false,
     scale: 2,
@@ -24,9 +25,19 @@ export const copilotConfig = {
     offsetMouseY: -180,
     exposure: 1.45,
 
+    lighting: {
+        ambient: { color: 0xffffff, intensity: 1.2 },
+        directional: [
+            { color: 0xf1e9ff, intensity: 1.1, position: [-4, 4, 6] },
+            { color: 0x745cff, intensity: 0.45, position: [4, 1, 3] }
+        ]
+    },
+
     defaultMaterial: {
         color: 0xffffff,
-        matcapMap: MASCOT_MATCAP
+        matcapMap: MASCOT_MATCAP,
+        roughness: 0.52,
+        metalness: 0.04
     },
 
     materials: {
@@ -39,18 +50,24 @@ export const copilotConfig = {
             aoMap: 'assets/face_sss-08fee22135b1ea64.jpg'
         },
         eyes: {
-            color: 0xffffff,
-            aoMap: 'assets/eyes_sss-d4ec85f4a631f091.jpg'
+            color: 0x35c9ff,
+            aoMap: 'assets/eyes_sss-d4ec85f4a631f091.jpg',
+            emissive: 0x0b7699,
+            emissiveIntensity: 0.4
         },
         glass: {
-            color: 0x95ddff,
+            color: 0x6035c7,
             aoMap: 'assets/glasses_sss-60c5ab8eb11601ef.jpg',
-            matcapMap: METAL_MATCAP
+            matcapMap: METAL_MATCAP,
+            roughness: 0.3,
+            metalness: 0.16
         },
         goggle: {
-            color: 0x20233d,
+            color: 0xa66cff,
             aoMap: 'assets/goggle_sss-e9ec45c9470a5ef8.jpg',
-            matcapMap: METAL_MATCAP
+            matcapMap: METAL_MATCAP,
+            roughness: 0.34,
+            metalness: 0.12
         }
     }
 };

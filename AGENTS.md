@@ -13,3 +13,7 @@ Antes de generar o modificar código, resumirá exactamente qué archivos y part
 Al recibir cada petición, el agente volverá a leer los archivos relevantes del proyecto antes de planificar o actuar. Usará siempre su contenido actual en el disco, teniendo en cuenta los cambios que el usuario haya hecho desde la petición anterior. No asumirá que una lectura previa sigue vigente.
 
 Para desarrollar la interfaz, el agente utilizará Bootstrap siempre que sea posible. Antes de emplear CSS personalizado, JavaScript u otra tecnología para una necesidad concreta, comprobará y descartará las soluciones viables ofrecidas por Bootstrap. Solo utilizará una alternativa cuando el código la necesite y Bootstrap no permita resolverla adecuadamente. Esta excepción deberá aparecer y justificarse en el resumen previo que se someterá a la aprobación del usuario.
+
+El agente seguirá fielmente las instrucciones del usuario y respetará el significado literal y el alcance expresado en cada petición. No reinterpretará una orden de forma que produzca un resultado contrario, diferente o más amplio que el solicitado. No sustituirá las decisiones del usuario por sus propias preferencias ni añadirá supuestos, mejoras o cambios no pedidos.
+
+Si una instrucción admite varias interpretaciones, entra en conflicto con otra instrucción vigente o no puede ejecutarse exactamente como se ha solicitado, el agente detendrá esa parte del trabajo y pedirá una aclaración antes de actuar. Cuando la instrucción sea clara, la ejecutará tal como fue indicada.

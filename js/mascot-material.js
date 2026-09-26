@@ -114,7 +114,7 @@ void main() {
     vec2 matcapUv = matcapNormal.xy / denominator + 0.5;
     vec3 matcap = texture2D(uMatcapTex, matcapUv).rgb;
     vec3 ao = texture2D(uAo, vUv).rgb;
-    vec3 normal = normalize(vViewNormal + ao * 0.8);
+    vec3 normal = normalize(vViewNormal);
     float light = dot(normal, normalize(uLightDirection)) * 0.5 + 0.5;
     light = pow(light, 12.0) * 0.5;
 
@@ -155,6 +155,16 @@ function shaderColorFromHex(hex) {
 
 // Builds the shared GitHub-style material for every mascot type.
 export function createMascotMaterial({ stage, config, options, meshPosition }) {
+    if (config.materialStyle === 'clean') {
+        return new THREE.MeshStandardMaterial({
+            color: options.color,
+            roughness: options.roughness ?? 0.5,
+            metalness: options.metalness ?? 0,
+            emissive: options.emissive ?? 0x000000,
+            emissiveIntensity: options.emissiveIntensity ?? 1
+        });
+    }
+
     return new THREE.ShaderMaterial({
         vertexShader: MASCOT_VERTEX_SHADER,
         fragmentShader: MASCOT_FRAGMENT_SHADER,
