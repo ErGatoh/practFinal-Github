@@ -26,6 +26,7 @@
         <script type="module" src="js/models.js"></script>
         <script type="module" src="js/navbar.js"></script>
         <script type="module" src="js/hero.js"></script>
+        <script type="module" src="js/video-control.js"></script>
     </head>
     <body class="bg-dark text-light">
         <!-- GitHub-style navbar -->
@@ -198,6 +199,12 @@
                                         <video class="preview-video d-md-none" autoplay muted loop playsinline aria-label="GitHub Copilot code editor demonstration">
                                             <source src="assets/code-1_mobile-56dc14fe27999221.mp4" type="video/mp4">
                                         </video>
+
+                                        <button class="video-control" id="videoControl" type="button" aria-label="Pause video">
+                                            <svg class="video-control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path id="videoControlPath" d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"></path>
+                                            </svg>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="video-black-floor" aria-hidden="true"></div>
