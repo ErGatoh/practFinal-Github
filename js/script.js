@@ -15,6 +15,7 @@ export class ModelStage {
     constructor() {
         // Shared resources for every model instance.
         this.items = [];
+        this.effects = [];
         this.modelCache = new Map();
         this.textureCache = new Map();
         this.materialCache = new WeakMap();
@@ -28,6 +29,7 @@ export class ModelStage {
         this.renderer = new THREE.WebGLRenderer({
             antialias: !this.isMobile,
             alpha: true,
+            premultipliedAlpha: true,
             powerPreference: 'low-power'
         });
         this.renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -87,6 +89,14 @@ export class ModelStage {
         this.items.push(item);
         this.observer.observe(container);
         return item;
+    }
+
+    addEffect(effect) {
+        if (!effect || this.effects.includes(effect)) return effect || null;
+
+        this.effects.push(effect);
+        this.requestRender();
+        return effect;
     }
 
     getModel(url) {
@@ -156,6 +166,8 @@ export class ModelStage {
             }
         }
 
+        for (const effect of this.effects) effect.resize?.();
+
         this.requestRender();
     }
 
@@ -168,9 +180,14 @@ export class ModelStage {
     requestRender() {
         if (this.frameID !== null) return;
 
-        if (document.hidden || !this.items.some((item) => (
+        const hasVisibleItem = this.items.some((item) => (
             item.visible && item.renderingEnabled && item.model
-        ))) {
+        ));
+        const hasVisibleEffect = this.effects.some((effect) => (
+            effect.visible && effect.renderingEnabled
+        ));
+
+        if (document.hidden || (!hasVisibleItem && !hasVisibleEffect)) {
             this.clear();
             return;
         }
@@ -191,7 +208,15 @@ export class ModelStage {
         this.clear();
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
+        const elapsedTime = this.lastFrameTime ? time - this.lastFrameTime : 0;
         let keepRendering = false;
+
+        for (const effect of this.effects) {
+            if (!effect.visible || !effect.renderingEnabled) continue;
+
+            keepRendering = effect.update(time, elapsedTime) || keepRendering;
+            effect.render(this.renderer, viewportWidth, viewportHeight);
+        }
 
         for (const item of this.items) {
             if (!item.visible || !item.renderingEnabled || !item.model) continue;
@@ -203,7 +228,7 @@ export class ModelStage {
             const clipBottom = Math.min(viewportHeight, rect.bottom);
             if (clipRight <= clipLeft || clipBottom <= clipTop) continue;
 
-            keepRendering = item.update(this.pointer, time - this.lastFrameTime) || keepRendering;
+            keepRendering = item.update(this.pointer, elapsedTime) || keepRendering;
             item.camera.aspect = rect.width / rect.height;
             item.camera.updateProjectionMatrix();
 
@@ -241,12 +266,21 @@ class InteractiveModel {
         this.basePositionY = options.positionY ?? config.positionY;
         this.actions = new Set(options.actions || []);
         this.pose = {};
+        this.interactionPose = {};
         this.visible = false;
         this.renderingEnabled = true;
         this.model = null;
         this.loadPromise = null;
         this.mouseNDC = new THREE.Vector2(0, 0);
         this.headPosition = new THREE.Vector3();
+        this.basePosition = new THREE.Vector3(0, this.basePositionY, 0);
+        this.baseRotation = new THREE.Euler();
+        this.pointerRotation = new THREE.Euler();
+        this.interactionLightPosition = new THREE.Vector3(0, -0.8, 2.4);
+        this.interactionLightViewPosition = new THREE.Vector3();
+        this.interactionLightColor = new THREE.Color(0xa982ff);
+        this.interactionLightIntensity = 0;
+        this.interactionLight = null;
         this.limitX = config.degreesHorizontal * (Math.PI / 180);
         this.limitUp = config.degreesVerticalUp * (Math.PI / 180);
         this.limitDown = config.degreesVerticalDown * (Math.PI / 180);
@@ -285,17 +319,59 @@ class InteractiveModel {
         Object.assign(this.pose, pose);
         if (!this.model) return;
 
-        this.applyPose(pose);
+        this.applyCompositePose();
         this.stage.requestRender();
     }
 
-    applyPose(pose) {
-        if ('offsetX' in pose) this.model.position.x = pose.offsetX;
-        if ('offsetY' in pose) this.model.position.y = this.basePositionY + pose.offsetY;
-        if ('offsetZ' in pose) this.model.position.z = pose.offsetZ;
-        if ('rotationX' in pose) this.model.rotation.x = pose.rotationX;
-        if ('rotationY' in pose) this.model.rotation.y = pose.rotationY;
-        if ('rotationZ' in pose) this.model.rotation.z = pose.rotationZ;
+    setInteractionPose(pose, requestRender = true) {
+        Object.assign(this.interactionPose, pose);
+        if (!this.model) return;
+
+        this.applyCompositePose();
+        if (requestRender) this.stage.requestRender();
+    }
+
+    setInteractionLight({ color, intensity, position }, requestRender = true) {
+        if (color !== undefined) this.interactionLightColor.set(color);
+        if (position) this.interactionLightPosition.set(...position);
+        this.interactionLightIntensity = Math.max(0, intensity || 0);
+
+        if (this.config.useLights !== false) {
+            if (!this.interactionLight) {
+                this.interactionLight = new THREE.PointLight(
+                    this.interactionLightColor,
+                    this.interactionLightIntensity,
+                    8,
+                    2
+                );
+                this.scene.add(this.interactionLight);
+            }
+
+            this.interactionLight.color.copy(this.interactionLightColor);
+            this.interactionLight.intensity = this.interactionLightIntensity;
+            this.interactionLight.position.copy(this.interactionLightPosition);
+        }
+
+        if (requestRender) this.stage.requestRender();
+    }
+
+    applyCompositePose() {
+        const layout = this.pose;
+        const interaction = this.interactionPose;
+
+        this.model.position.set(
+            this.basePosition.x + (layout.offsetX || 0) + (interaction.offsetX || 0),
+            this.basePosition.y + (layout.offsetY || 0) + (interaction.offsetY || 0),
+            this.basePosition.z + (layout.offsetZ || 0) + (interaction.offsetZ || 0)
+        );
+        this.model.rotation.set(
+            this.baseRotation.x + (layout.rotationX || 0)
+                + (interaction.rotationX || 0) + this.pointerRotation.x,
+            this.baseRotation.y + (layout.rotationY || 0)
+                + (interaction.rotationY || 0) + this.pointerRotation.y,
+            this.baseRotation.z + (layout.rotationZ || 0)
+                + (interaction.rotationZ || 0) + this.pointerRotation.z
+        );
     }
 
     addLights() {
@@ -382,8 +458,27 @@ class InteractiveModel {
                 });
 
                 this.model.scale.setScalar(this.options.scale ?? this.config.scale);
-                this.model.position.set(0, this.basePositionY, 0);
-                this.applyPose(this.pose);
+                this.basePosition.set(0, this.basePositionY, 0);
+                this.baseRotation.copy(this.model.rotation);
+                this.applyCompositePose();
+
+                this.model.traverse((child) => {
+                    if (!child.isMesh) return;
+
+                    child.onBeforeRender = (renderer, scene, camera, geometry, material) => {
+                        const uniforms = material.uniforms;
+                        if (!uniforms?.uInteractionLightIntensity) return;
+
+                        this.interactionLightViewPosition
+                            .copy(this.interactionLightPosition)
+                            .applyMatrix4(camera.matrixWorldInverse);
+                        uniforms.uInteractionLightPosition.value.copy(
+                            this.interactionLightViewPosition
+                        );
+                        uniforms.uInteractionLightColor.value.copy(this.interactionLightColor);
+                        uniforms.uInteractionLightIntensity.value = this.interactionLightIntensity;
+                    };
+                });
                 this.scene.add(this.model);
                 this.stage.requestRender();
             })
@@ -419,10 +514,11 @@ class InteractiveModel {
 
         const frameCount = Math.min(Math.max(elapsedTime, 0), 64) / (1000 / 60);
         const smoothing = 1 - Math.pow(1 - this.config.rotationSpeed, frameCount);
-        const differenceY = targetRotationY - this.model.rotation.y;
-        const differenceX = targetRotationX - this.model.rotation.x;
-        this.model.rotation.y += differenceY * smoothing;
-        this.model.rotation.x += differenceX * smoothing;
+        const differenceY = targetRotationY - this.pointerRotation.y;
+        const differenceX = targetRotationX - this.pointerRotation.x;
+        this.pointerRotation.y += differenceY * smoothing;
+        this.pointerRotation.x += differenceX * smoothing;
+        this.applyCompositePose();
 
         return Math.abs(differenceY) > 0.0001 || Math.abs(differenceX) > 0.0001;
     }

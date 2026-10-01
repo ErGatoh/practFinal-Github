@@ -5,12 +5,15 @@ uniform vec3 uTranslate;
 varying vec2 vUv;
 varying vec3 vViewNormal;
 varying vec3 vModelPosition;
+varying vec3 vViewPosition;
 
 void main() {
     vUv = uv;
     vViewNormal = normalize(normalMatrix * normal);
     vModelPosition = position + uTranslate;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    vec4 viewPosition = modelViewMatrix * vec4(position, 1.0);
+    vViewPosition = viewPosition.xyz;
+    gl_Position = projectionMatrix * viewPosition;
 }
 `;
 
@@ -20,10 +23,14 @@ uniform sampler2D uColorTex;
 uniform sampler2D uMatcapTex;
 uniform vec3 uColor;
 uniform vec3 uLightDirection;
+uniform vec3 uInteractionLightPosition;
+uniform vec3 uInteractionLightColor;
+uniform float uInteractionLightIntensity;
 
 varying vec2 vUv;
 varying vec3 vViewNormal;
 varying vec3 vModelPosition;
+varying vec3 vViewPosition;
 
 vec3 blendSoftLight(vec3 base, vec3 blend) {
     return mix(
@@ -117,6 +124,17 @@ void main() {
     vec3 normal = normalize(vViewNormal);
     float light = dot(normal, normalize(uLightDirection)) * 0.5 + 0.5;
     light = pow(light, 12.0) * 0.5;
+    vec3 interactiveLightVector = uInteractionLightPosition - vViewPosition;
+    float interactiveDistance = max(length(interactiveLightVector), 0.001);
+    float interactiveDiffuse = max(
+        dot(normal, interactiveLightVector / interactiveDistance),
+        0.0
+    );
+    float interactiveAttenuation = 1.0 / (1.0 + interactiveDistance * interactiveDistance * 0.22);
+    vec3 interactiveLight = uInteractionLightColor
+        * interactiveDiffuse
+        * interactiveAttenuation
+        * uInteractionLightIntensity;
 
     vec3 color = uColor;
 #ifdef USE_COLOR_TEXTURE
@@ -141,7 +159,10 @@ void main() {
     shaded.z += mix(-0.3, 0.3, matcap.g) + 0.3;
 #endif
 
-    gl_FragColor = vec4(clamp(hsvToRgb(shaded) + light, 0.0, 1.0), 1.0);
+    gl_FragColor = vec4(
+        clamp(hsvToRgb(shaded) + light + interactiveLight, 0.0, 1.0),
+        1.0
+    );
 }
 `;
 
@@ -174,6 +195,9 @@ export function createMascotMaterial({ stage, config, options, meshPosition }) {
             uMatcapTex: { value: stage.getTexture(options.matcapMap, THREE.NoColorSpace) },
             uColor: { value: shaderColorFromHex(options.color) },
             uLightDirection: { value: new THREE.Vector3(-1, 1, 3) },
+            uInteractionLightPosition: { value: new THREE.Vector3(0, -0.8, 2.4) },
+            uInteractionLightColor: { value: new THREE.Color(0xa982ff) },
+            uInteractionLightIntensity: { value: 0 },
             uTranslate: { value: meshPosition.clone() }
         },
         defines: {

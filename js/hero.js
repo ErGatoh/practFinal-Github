@@ -1,237 +1,81 @@
-import { getModelInstance } from './models.js';
+import { getModelInstance, getModelStage } from './models.js';
+import { HeroEffects } from './hero-effects.js';
 
 // Hero controls.
 const hero = document.querySelector('#hero');
 const scrollScene = hero?.querySelector('.hero-scroll-scene');
 const signupButton = hero?.querySelector('#heroSignupButton');
-const starParticleGroup = hero?.querySelector('.hero-star-particles');
+const downloadButton = hero?.querySelector('#heroDownloadButton');
 const navbar = document.querySelector('.navbar');
 
 if (hero && scrollScene && navbar) {
-    const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
     const MOBILE_QUERY = '(max-width: 767.98px)';
-    const TABLET_QUERY = '(max-width: 991.98px)';
     const clamp = (value, minimum = 0, maximum = 1) => (
         Math.min(Math.max(value, minimum), maximum)
     );
-
-    let scrollAnimationFrame = null;
-    let motionAnimationFrame = null;
-    let previousMotionTime = null;
-    let activeModelTime = 0;
-    let modelMotionSpeed = 0;
-    let particleSpawnTime = 0;
-    let isHeroVisible = true;
-    let navbarHeight = 0;
-    const particles = [];
-    const motionSources = new Set();
     const mobileLayout = window.matchMedia(MOBILE_QUERY);
-    const tabletLayout = window.matchMedia(TABLET_QUERY);
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const motionSources = new Set();
+    const modelStage = getModelStage();
+    let heroEffects = null;
+    let scrollAnimationFrame = null;
+    let isHeroVisible = true;
+    let modelsRenderingEnabled = true;
+    let navbarHeight = 0;
 
-    // Hero-only poses preserve the reusable model defaults.
-    const modelMotion = {
-        cat: {
-            rotationX: -0.08, rotationY: -0.38, rotationZ: -0.14,
-            rotationDegrees: 4.5, rotationSeconds: 5.4,
-            rise: 0.05, drop: 0.16, riseSeconds: 4.1
-        },
-        copilot: {
-            rotationX: -0.1, rotationY: 0.34, rotationZ: 0.17,
-            rotationDegrees: 4, rotationSeconds: 6.1,
-            rise: 0.05, drop: 0.24, riseSeconds: 4.8
-        },
-        duck: {
-            rotationX: -0.05, rotationY: -0.48, rotationZ: -0.12,
-            rotationDegrees: 3.8, rotationSeconds: 5.7, rise: 0.045, riseSeconds: 4.5
-        }
+    // Hero-only layout poses preserve the reusable model defaults.
+    const modelLayout = {
+        cat: { rotationX: -0.08, rotationY: -0.38, rotationZ: -0.14 },
+        copilot: { rotationX: -0.1, rotationY: 0.34, rotationZ: 0.17 },
+        duck: { rotationX: -0.05, rotationY: -0.48, rotationZ: -0.12 }
     };
-
     const heroModels = Array.from(hero.querySelectorAll('[data-hero-model]'))
         .map((container) => ({
-            instance: getModelInstance(container),
-            motion: modelMotion[container.dataset.heroModel] || null,
-            renderingEnabled: true
+            name: container.dataset.heroModel,
+            instance: getModelInstance(container)
         }))
-        .filter(({ instance, motion }) => instance && motion);
+        .filter(({ name, instance }) => instance && modelLayout[name]);
 
-    for (const { instance, motion } of heroModels) {
-        instance.setPose({
-            rotationX: motion.rotationX,
-            rotationY: motion.rotationY,
-            rotationZ: motion.rotationZ,
-            offsetY: 0
-        });
+    for (const { name, instance } of heroModels) {
+        instance.setPose({ ...modelLayout[name], offsetY: 0 });
     }
 
-    const setHeroModelsRendering = (isEnabled) => {
-        for (const model of heroModels) {
-            model.renderingEnabled = isEnabled;
-            model.instance.setRenderingEnabled(isEnabled);
-        }
+    const ensureHeroEffects = () => {
+        if (heroEffects || mobileLayout.matches || !modelStage) return heroEffects;
+
+        heroEffects = new HeroEffects({
+            stage: modelStage,
+            hero,
+            models: heroModels
+        });
+        modelStage.addEffect(heroEffects);
+        return heroEffects;
     };
 
-    const removeParticle = (particle, index) => {
-        particle.element.remove();
-        particles.splice(index, 1);
-    };
-
-    const clearParticles = () => {
-        while (particles.length) {
-            removeParticle(particles[particles.length - 1], particles.length - 1);
-        }
-        particleSpawnTime = 0;
-    };
-
-    // Emit only through the upper half of the glow.
-    const spawnParticle = () => {
-        if (!starParticleGroup) return;
-
-        const particleLimit = tabletLayout.matches ? 5 : 7;
-        if (particles.length >= particleLimit) return;
-
-        const element = document.createElementNS(SVG_NAMESPACE, 'circle');
-        const angle = Math.PI * (1.06 + Math.random() * 0.88);
-        const speed = 18 + Math.random() * 16;
-        const particle = {
-            element,
-            x: 500 + (Math.random() - 0.5) * 12,
-            y: 458 + (Math.random() - 0.5) * 7,
-            velocityX: Math.cos(angle) * speed,
-            velocityY: Math.sin(angle) * speed,
-            age: 0,
-            radius: 0.65 + Math.random() * 0.85
-        };
-
-        element.setAttribute('cx', '0');
-        element.setAttribute('cy', '0');
-        element.setAttribute('r', particle.radius.toFixed(2));
-        element.setAttribute('opacity', '0');
-        starParticleGroup.append(element);
-        particles.push(particle);
-    };
-
-    const updateParticles = (elapsedSeconds, motionRequested) => {
-        if (!motionRequested) {
-            particleSpawnTime = 0;
-            return;
-        }
-
-        particleSpawnTime += elapsedSeconds;
-        const spawnInterval = tabletLayout.matches ? 0.85 : 0.65;
-
-        while (particleSpawnTime >= spawnInterval) {
-            particleSpawnTime -= spawnInterval;
-            spawnParticle();
-        }
-
-        for (let index = particles.length - 1; index >= 0; index -= 1) {
-            const particle = particles[index];
-            particle.age += elapsedSeconds;
-            particle.x += particle.velocityX * elapsedSeconds;
-            particle.y += particle.velocityY * elapsedSeconds;
-
-            const ellipseDistance = (
-                ((particle.x - 500) / 430) ** 2
-                + ((particle.y - 460) / 300) ** 2
-            );
-            if (ellipseDistance >= 1 || particle.age >= 5) {
-                removeParticle(particle, index);
-                continue;
-            }
-
-            const fadeIn = clamp(particle.age / 0.18);
-            const fadeOut = clamp((1 - ellipseDistance) / 0.24);
-            const opacity = Math.min(fadeIn, fadeOut) * 0.76;
-            particle.element.setAttribute(
-                'transform',
-                `translate(${particle.x.toFixed(2)} ${particle.y.toFixed(2)})`
-            );
-            particle.element.setAttribute('opacity', opacity.toFixed(3));
-        }
-    };
-
-    const isMotionRequested = () => (
+    const isInteractionRequested = () => (
         motionSources.size > 0
         && isHeroVisible
         && !document.hidden
         && !mobileLayout.matches
-        && !reducedMotion.matches
     );
 
-    // Slow the phase itself so models freeze at the reached pose.
-    const updateHeroMotion = (time) => {
-        const frameInterval = 1000 / (tabletLayout.matches ? 24 : 30);
-        if (previousMotionTime === null) previousMotionTime = time - frameInterval;
+    const syncHeroEffects = () => {
+        const effects = ensureHeroEffects();
+        if (!effects) return;
 
-        const elapsedMilliseconds = time - previousMotionTime;
-        if (elapsedMilliseconds < frameInterval) {
-            motionAnimationFrame = window.requestAnimationFrame(updateHeroMotion);
-            return;
-        }
-
-        const elapsedSeconds = Math.min(elapsedMilliseconds, 64) / 1000;
-        const motionRequested = isMotionRequested();
-        previousMotionTime = time;
-
-        if (motionRequested) {
-            modelMotionSpeed = Math.min(1, modelMotionSpeed + elapsedSeconds / 0.28);
-        } else {
-            modelMotionSpeed = Math.max(0, modelMotionSpeed - elapsedSeconds / 0.62);
-        }
-
-        activeModelTime += elapsedSeconds * modelMotionSpeed;
-        updateParticles(elapsedSeconds, motionRequested);
-
-        if (modelMotionSpeed > 0) {
-            for (const { instance, motion, renderingEnabled } of heroModels) {
-                if (!renderingEnabled) continue;
-
-                const rotationPhase = (activeModelTime / motion.rotationSeconds) * Math.PI * 2;
-                const risePhase = (activeModelTime / motion.riseSeconds) * Math.PI * 2;
-                const verticalWave = Math.sin(risePhase);
-                const offsetY = motion.drop
-                    ? verticalWave * (verticalWave > 0 ? motion.drop : motion.rise)
-                    : (1 - Math.cos(risePhase)) * motion.rise * 0.5;
-                instance.setPose({
-                    rotationX: motion.rotationX,
-                    rotationY: motion.rotationY,
-                    rotationZ: motion.rotationZ - Math.sin(rotationPhase)
-                        * motion.rotationDegrees * (Math.PI / 180),
-                    offsetY
-                });
-            }
-        }
-
-        if (motionRequested || modelMotionSpeed > 0) {
-            motionAnimationFrame = window.requestAnimationFrame(updateHeroMotion);
-        } else {
-            motionAnimationFrame = null;
-            previousMotionTime = null;
-        }
+        effects.setReducedMotion(reducedMotion.matches);
+        effects.setVisible(isHeroVisible && !mobileLayout.matches);
+        effects.setRenderingEnabled(modelsRenderingEnabled && !mobileLayout.matches);
+        effects.setInteractionActive(isInteractionRequested());
     };
 
-    const syncHeroMotion = () => {
-        const motionRequested = isMotionRequested();
-        hero.classList.toggle('is-hero-motion-active', motionRequested);
-
-        if (document.hidden || mobileLayout.matches || reducedMotion.matches) {
-            if (motionAnimationFrame !== null) window.cancelAnimationFrame(motionAnimationFrame);
-            motionAnimationFrame = null;
-            previousMotionTime = null;
-            modelMotionSpeed = 0;
-            clearParticles();
-            return;
-        }
-
-        if ((motionRequested || modelMotionSpeed > 0)
-            && motionAnimationFrame === null) {
-            previousMotionTime = null;
-            motionAnimationFrame = window.requestAnimationFrame(updateHeroMotion);
-        }
+    const setHeroModelsRendering = (isEnabled) => {
+        modelsRenderingEnabled = isEnabled;
+        for (const { instance } of heroModels) instance.setRenderingEnabled(isEnabled);
+        heroEffects?.setRenderingEnabled(isEnabled && !mobileLayout.matches);
     };
 
-    // Desktop and tablet keep the composition fixed while it scales and fades.
+    // Desktop and tablet keep the hero fixed while the video passes above it.
     const updateHero = () => {
         const hasScrolled = window.scrollY > 75;
         navbar.classList.toggle('hero-nav-at-top', !hasScrolled);
@@ -239,9 +83,9 @@ if (hero && scrollScene && navbar) {
 
         if (mobileLayout.matches || reducedMotion.matches) {
             hero.style.setProperty('--hero-progress', '0');
-            hero.style.setProperty('--video-progress', '0');
             setHeroModelsRendering(!mobileLayout.matches);
-            syncHeroMotion();
+            syncHeroEffects();
+            modelStage?.requestRender();
             scrollAnimationFrame = null;
             return;
         }
@@ -251,13 +95,13 @@ if (hero && scrollScene && navbar) {
         const stickyHeight = Math.max(window.innerHeight - navbarHeight, 1);
         const availableScroll = Math.max(scrollScene.offsetHeight - stickyHeight, 1);
         const progress = clamp((window.scrollY - sceneStart) / availableScroll);
-        const heroProgress = clamp(progress / 0.68);
-        const videoProgress = clamp(progress / 0.76);
+        const heroProgress = clamp(progress / 0.82);
 
         hero.style.setProperty('--hero-progress', heroProgress.toFixed(4));
-        hero.style.setProperty('--video-progress', videoProgress.toFixed(4));
-        setHeroModelsRendering(heroProgress < 0.91);
-        syncHeroMotion();
+        setHeroModelsRendering(heroProgress < 0.98);
+        syncHeroEffects();
+        heroEffects?.resize();
+        modelStage?.requestRender();
         scrollAnimationFrame = null;
     };
 
@@ -269,9 +113,9 @@ if (hero && scrollScene && navbar) {
     const syncLayoutMetrics = () => {
         navbarHeight = navbar.offsetHeight;
         hero.style.setProperty('--hero-navbar-height', `${navbarHeight}px`);
+        heroEffects?.resize();
     };
 
-    // Hover and keyboard focus share the same resumable motion state.
     const setMotionSource = (source, isActive) => {
         if (isActive) {
             motionSources.add(source);
@@ -279,30 +123,44 @@ if (hero && scrollScene && navbar) {
             motionSources.delete(source);
         }
 
-        syncHeroMotion();
+        syncHeroEffects();
     };
 
-    signupButton?.addEventListener('pointerenter', () => setMotionSource('pointer', true));
-    signupButton?.addEventListener('pointerleave', () => setMotionSource('pointer', false));
-    signupButton?.addEventListener('focus', () => setMotionSource('focus', true));
-    signupButton?.addEventListener('blur', () => setMotionSource('focus', false));
+    const registerInteractionTrigger = (element, sourceName) => {
+        if (!element) return;
+
+        const pointerSource = `${sourceName}-pointer`;
+        const focusSource = `${sourceName}-focus`;
+        element.addEventListener('pointerenter', (event) => {
+            if (event.pointerType === 'mouse') setMotionSource(pointerSource, true);
+        });
+        element.addEventListener('pointerleave', (event) => {
+            if (event.pointerType === 'mouse') setMotionSource(pointerSource, false);
+        });
+        element.addEventListener('focus', () => {
+            setMotionSource(focusSource, element.matches(':focus-visible'));
+        });
+        element.addEventListener('blur', () => setMotionSource(focusSource, false));
+    };
+
+    registerInteractionTrigger(signupButton, 'signup');
+    registerInteractionTrigger(downloadButton, 'download');
 
     const heroObserver = new IntersectionObserver(([entry]) => {
         isHeroVisible = entry.isIntersecting;
-        syncHeroMotion();
+        syncHeroEffects();
     });
     heroObserver.observe(hero);
 
-    document.addEventListener('visibilitychange', syncHeroMotion);
+    document.addEventListener('visibilitychange', syncHeroEffects);
     reducedMotion.addEventListener('change', () => {
-        syncHeroMotion();
+        syncHeroEffects();
         requestHeroUpdate();
     });
     mobileLayout.addEventListener('change', () => {
-        syncHeroMotion();
+        syncHeroEffects();
         requestHeroUpdate();
     });
-    tabletLayout.addEventListener('change', requestHeroUpdate);
     window.addEventListener('scroll', requestHeroUpdate, { passive: true });
     window.addEventListener('resize', () => {
         syncLayoutMetrics();

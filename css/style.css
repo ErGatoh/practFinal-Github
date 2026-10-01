@@ -44,11 +44,12 @@ body {
 /* Navbar base. */
 .navbar {
     font-family: 'Mona Sans', sans-serif !important;
+    min-height: 80px;
     padding-block: calc(0.5rem + 2.5px) !important;
 }
 
 /* Desktop navbar alignment and responsive search. */
-@media (min-width: 1020px) {
+@media (min-width: 1012px) {
     .navbar-expand-custom {
         flex-wrap: nowrap;
         justify-content: flex-start;
@@ -67,6 +68,10 @@ body {
         flex-direction: row;
         align-items: center;
         margin-bottom: 0 !important;
+    }
+
+    .navbar-expand-custom .navbar-nav .nav-item:not(:last-child) {
+        margin-right: calc(0.5rem + 3px) !important;
     }
 
     .desktop-navbar-brand {
@@ -107,7 +112,7 @@ body {
 }
 
 /* Mobile navbar. */
-@media (max-width: 1019.98px) {
+@media (max-width: 1011.98px) {
     .desktop-navbar-brand,
     .desktop-navbar-actions {
         display: none;
@@ -179,9 +184,9 @@ body {
     }
 
     body.mobile-menu-open #githubNavbar {
-        width: 100vw;
+        width: calc(100% + 2.5rem);
         margin-top: 0.7rem;
-        margin-inline: calc(50% - 50vw);
+        margin-inline: -1.25rem;
         padding-inline: 1rem;
         background-color: #000000;
         border-top: 2px solid #30363d;
@@ -356,7 +361,6 @@ body {
 /* Hero scene and scroll progress. */
 .hero-section {
     --hero-progress: 0;
-    --video-progress: 0;
     --hero-navbar-height: 0px;
     --page-gutter: clamp(2.25rem, 6.5vw, 7rem);
     background: #000000;
@@ -364,7 +368,7 @@ body {
 
 .hero-scroll-scene {
     position: relative;
-    height: 230svh;
+    height: 225svh;
     background: #000000;
 }
 
@@ -390,51 +394,6 @@ body {
     pointer-events: none;
 }
 
-/* Background glow. */
-.hero-glow {
-    position: absolute;
-    bottom: -14%;
-    left: 50%;
-    width: min(68vw, 980px);
-    height: 48%;
-    border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(125, 83, 255, 0.78) 0%, rgba(87, 67, 209, 0.48) 36%, transparent 72%);
-    filter: blur(38px);
-    opacity: 0.82;
-    pointer-events: none;
-    transform: translateX(-50%);
-    transition: opacity 520ms ease, filter 520ms ease;
-}
-
-/* Hover brightens the same glow without moving it. */
-.hero-section.is-hero-motion-active .hero-glow {
-    filter: blur(46px) saturate(1.15);
-    opacity: 1;
-}
-
-/* Tiny vector stars stay inside the purple glow. */
-.hero-stars {
-    position: absolute;
-    z-index: 1;
-    bottom: -2%;
-    left: 50%;
-    width: min(78vw, 1000px);
-    height: 54%;
-    overflow: visible;
-    pointer-events: none;
-    mix-blend-mode: screen;
-    transform: translateX(-50%);
-}
-
-.hero-star-static {
-    fill: rgba(255, 255, 255, 0.7);
-    opacity: 0.48;
-}
-
-.hero-star-particles {
-    fill: #ffffff;
-}
-
 /* Hero mascot hit areas drive the shared WebGL canvas. */
 .hero-models {
     position: absolute;
@@ -446,51 +405,46 @@ body {
 .hero-model {
     position: absolute;
     aspect-ratio: 1;
-    transform: scale(calc(1 - (var(--hero-progress) * 0.16)));
+    transform: scale(calc(1 - (var(--hero-progress) * 0.003)));
     transform-origin: center bottom;
 }
 
 .hero-model-cat {
-    bottom: 1.75rem;
+    top: min(60svh, 41.5rem);
     left: calc(50% + 3.5rem);
     width: clamp(140px, 11vw, 190px);
 }
 
 .hero-model-copilot {
-    right: calc(50% + 3.5rem);
-    bottom: 0.75rem;
+    right: calc(47% + 3.5rem);
+    top: min(62svh, 43rem);
     width: clamp(150px, 12vw, 200px);
 }
 
 .hero-model-duck {
-    bottom: -10rem;
-    left: 50%;
+    top: min(78svh, 47rem);
+    left: 54%;
     width: clamp(110px, 9vw, 150px);
-    transform: translateX(-50%) scale(calc(1 - (var(--hero-progress) * 0.16)));
+    transform: translateX(-50%) scale(calc(1 - (var(--hero-progress) * 0.003)));
 }
 
-/* A foreground wash fades the shared WebGL models without changing their materials. */
+/* The moving video and black floor cover the hero without an artificial fade. */
 .hero-visual-fade {
-    position: absolute;
-    z-index: 3;
-    inset: 0;
-    background: #07083f;
-    opacity: calc(var(--hero-progress) * 1.08);
-    pointer-events: none;
+    display: none;
 }
 
 /* Hero message. */
 .hero-copy {
     position: absolute;
     z-index: 4;
-    top: clamp(9.5rem, 22vh, 13.5rem);
+    top: clamp(3.5rem, 10vh, 6rem);
     left: 50%;
     width: calc(100% - (var(--page-gutter) * 2));
     max-width: 980px;
-    opacity: calc(1 - (var(--hero-progress) * 1.12));
-    transform: translateX(-50%) scale(calc(1 - (var(--hero-progress) * 0.14)));
+    opacity: 1;
+    transform: translateX(-50%) scale(calc(1 - (var(--hero-progress) * 0.003)));
     transform-origin: center top;
-    will-change: opacity, transform;
+    will-change: transform;
 }
 
 .hero-title {
@@ -557,19 +511,48 @@ body {
 
 .hero-actions > .btn {
     min-height: 58px;
-    border-color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 1);
+}
+
+.hero-actions > .btn-outline-light {
+    --bs-btn-bg: transparent;
+    --bs-btn-hover-bg: rgba(255, 255, 255, 0.12);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-active-bg: rgba(255, 255, 255, 0.18);
+    --bs-btn-active-color:ffffff;
 }
 
 /* Independent video scene. */
 .hero-video-stage {
     position: absolute;
     z-index: 5;
-    top: 100svh;
+    top: min(92svh, 64rem);
     right: 0;
     bottom: 0;
     left: 0;
     overflow: visible;
     pointer-events: none;
+}
+
+/* Blue-green light travels with the video instead of tinting the hero background. */
+.hero-video-stage::before {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    top: clamp(14rem, 32vw, 28rem);
+    left: 50%;
+    width: 140vw;
+    height: clamp(18rem, 36vw, 32rem);
+    border-radius: 50%;
+    background: linear-gradient(
+        180deg,
+        rgba(34, 91, 111, 0) 0%,
+        rgba(39, 103, 124, 0.42) 40%,
+        rgba(49, 121, 143, 0.78) 100%
+    );
+    filter: blur(34px);
+    pointer-events: none;
+    transform: translateX(-50%);
 }
 
 .hero-video-stage > .container-xl {
@@ -581,13 +564,12 @@ body {
 .hero-video-shell {
     position: absolute;
     z-index: 2;
-    top: 7svh;
+    top: 0;
     left: 50%;
     width: min(calc(100vw - (var(--page-gutter) * 2)), 1320px);
     max-width: 1320px;
     opacity: 1;
-    transform: translateX(-50%) scale(calc(0.82 + (var(--video-progress) * 0.18)));
-    transform-origin: center top;
+    transform: translateX(-50%);
     will-change: transform;
     pointer-events: auto;
 }
@@ -596,18 +578,23 @@ body {
     position: absolute;
     z-index: 1;
     inset: 0;
-    border: 1px solid rgba(157, 169, 255, 0.72);
+    border: 1px solid rgba(202, 210, 255, 0.94);
     border-radius: clamp(1.8rem, 2.4vw, 2.5rem) clamp(1.8rem, 2.4vw, 2.5rem) 0 0;
     background:
-        radial-gradient(circle at 50% -10%, rgba(196, 151, 255, 0.82), transparent 45%),
-        radial-gradient(circle at 7% 70%, rgba(71, 145, 208, 0.48), transparent 44%),
-        radial-gradient(circle at 93% 68%, rgba(92, 92, 202, 0.38), transparent 42%),
-        linear-gradient(180deg, #6857ad 0%, #5d5eb5 46%, #3677a4 100%);
+        radial-gradient(circle at 50% -8%, rgba(224, 194, 255, 0.68), transparent 48%),
+        radial-gradient(circle at 5% 68%, rgba(92, 180, 244, 0.46), transparent 46%),
+        radial-gradient(circle at 95% 66%, rgba(133, 116, 242, 0.42), transparent 45%),
+        linear-gradient(180deg, rgba(138, 119, 220, 0.62) 0%, rgba(112, 119, 218, 0.53) 46%, rgba(65, 151, 197, 0.48) 100%);
+    -webkit-backdrop-filter: blur(18px) saturate(1.45) brightness(1.18);
+    backdrop-filter: blur(18px) saturate(1.45) brightness(1.18);
     box-shadow:
-        inset 0 1px rgba(255, 255, 255, 0.16),
-        inset 0 28px 72px rgba(190, 146, 255, 0.16),
-        inset 24px 0 58px rgba(73, 114, 190, 0.12),
-        inset -24px 0 58px rgba(100, 78, 186, 0.11);
+        0 -30px 84px rgba(164, 111, 255, 0.72),
+        -30px 4px 72px rgba(73, 151, 231, 0.52),
+        30px 4px 72px rgba(133, 101, 235, 0.52),
+        inset 0 1px rgba(255, 255, 255, 0.34),
+        inset 0 36px 86px rgba(215, 178, 255, 0.3),
+        inset 30px 0 68px rgba(84, 155, 229, 0.24),
+        inset -30px 0 68px rgba(135, 102, 224, 0.23);
     overflow: hidden;
 }
 
@@ -629,8 +616,8 @@ body {
     height: 160svh;
     background: linear-gradient(
         180deg,
-        rgba(72, 48, 112, 0.2) 0,
-        rgba(36, 25, 58, 0.08) 20px,
+        rgba(72, 48, 112) 0,
+        rgba(36, 25, 58) 0.1px,
         #000000 58px,
         #000000 100%
     );
@@ -1060,7 +1047,7 @@ body {
 /* Tablet layout. */
 @media (max-width: 991.98px) {
     .hero-scroll-scene {
-        height: 220svh;
+        height: 210svh;
     }
 
     .hero-sticky-frame {
@@ -1068,24 +1055,24 @@ body {
     }
 
     .hero-copy {
-        top: clamp(7rem, 16vh, 10rem);
+        top: clamp(3.5rem, 9vh, 5.5rem);
         width: calc(100% - (var(--page-gutter) * 2));
     }
 
     .hero-model-cat {
-        bottom: 2rem;
+        top: min(59svh, 35rem);
         left: calc(50% + 2.25rem);
         width: 155px;
     }
 
     .hero-model-copilot {
         right: calc(50% + 2.25rem);
-        bottom: 1rem;
+        top: min(61svh, 36rem);
         width: 165px;
     }
 
     .hero-model-duck {
-        bottom: -7rem;
+        top: min(68svh, 40rem);
         left: 50%;
         width: 120px;
     }
@@ -1191,13 +1178,16 @@ body {
     }
 
     .hero-video-canvas {
-        background: #5f5aa0;
+        border-color: rgba(191, 204, 255, 0.78);
+        background:
+            radial-gradient(circle at 50% 0%, rgba(193, 151, 255, 0.34), transparent 50%),
+            linear-gradient(180deg, rgba(106, 104, 190, 0.3), rgba(57, 127, 170, 0.22));
         border-radius: 1.75rem 1.75rem 0 0;
         box-shadow:
-            0 -18px 48px rgba(112, 85, 224, 0.3),
-            -12px 0 34px rgba(72, 117, 194, 0.2),
-            12px 0 34px rgba(103, 82, 196, 0.2),
-            inset 0 1px rgba(255, 255, 255, 0.14);
+            0 -22px 58px rgba(132, 91, 234, 0.38),
+            -16px 0 42px rgba(72, 143, 214, 0.3),
+            16px 0 42px rgba(123, 91, 216, 0.3),
+            inset 0 1px rgba(255, 255, 255, 0.24);
     }
 
     .preview-window {
@@ -1211,7 +1201,7 @@ body {
         width: 100vw;
         height: 100svh;
         background: #000000;
-        border-top: 1px solid rgba(100, 108, 190, 0.62);
+        border-top: 1px solid rgba(100, 108, 190, 1);
         transform: translateX(-50%);
     }
 

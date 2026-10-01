@@ -63,7 +63,7 @@
 
                 <!-- Navigation links -->
                 <div class="collapse navbar-collapse" id="githubNavbar">
-                    <ul class="navbar-nav me-auto mb-2 fw-medium px-2 text-nowrap f-custom-spacing" style="--bs-nav-link-color: #fffffe; --bs-link-hover-color: #a4aea6; font-size: 16px;">
+                    <ul class="navbar-nav me-auto mb-2 fw-medium px-2 text-nowrap f-custom-spacing" style="--bs-nav-link-color: #fffffe; --bs-link-hover-color: #a4aea6; font-size: 18px;">
                         <li class="nav-item me-2">
                             <a class="nav-link d-flex align-items-center gap-1" href="#">
                                 Platform
@@ -153,23 +153,6 @@
                     <div class="hero-sticky-frame overflow-hidden">
                         <!-- Bottom-anchored visual composition -->
                         <div class="hero-visual" aria-hidden="true">
-                            <div class="hero-glow"></div>
-                            <svg class="hero-stars" viewBox="0 0 1000 520" preserveAspectRatio="xMidYMax slice">
-                                <defs>
-                                    <clipPath id="heroStarClip">
-                                        <ellipse cx="500" cy="460" rx="430" ry="300"></ellipse>
-                                    </clipPath>
-                                </defs>
-                                <g class="hero-star-static" clip-path="url(#heroStarClip)">
-                                    <circle cx="364" cy="388" r="1.2"></circle>
-                                    <circle cx="423" cy="337" r="0.9"></circle>
-                                    <circle cx="529" cy="354" r="0.8"></circle>
-                                    <circle cx="633" cy="372" r="0.9"></circle>
-                                    <path d="M392 430l1.7 3.6 3.7 1.7-3.7 1.7-1.7 3.6-1.7-3.6-3.7-1.7 3.7-1.7z"></path>
-                                </g>
-                                <g class="hero-star-particles" clip-path="url(#heroStarClip)"></g>
-                            </svg>
-
                             <!-- Shared renderer targets stay independent. -->
                             <div class="hero-models">
                                 <div class="hero-model hero-model-copilot" data-model="copilot" data-model-scale="6" data-model-position-y="-0.25" data-hero-model="copilot"></div>
@@ -193,7 +176,7 @@
 
                                         <button class="btn btn-success text-nowrap fw-semibold px-4" id="heroSignupButton" type="submit">Sign up for GitHub</button>
                                     </form>
-                                    <a class="btn btn-outline-light d-inline-flex align-items-center justify-content-center fw-semibold px-3" href="#">Download GitHub Copilot app</a>
+                                    <a class="btn btn-outline-light d-inline-flex align-items-center justify-content-center fw-semibold px-3" id="heroDownloadButton" href="#">Download GitHub Copilot app</a>
                                 </div>
                             </div>
                         </div>

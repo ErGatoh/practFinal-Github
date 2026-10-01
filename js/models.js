@@ -54,4 +54,9 @@ export function getModelInstance(target) {
     return container ? modelInstances.get(container) || null : null;
 }
 
+// Returns the shared renderer controller for scene-level effects.
+export function getModelStage() {
+    return modelStage;
+}
+
 mountModels();
