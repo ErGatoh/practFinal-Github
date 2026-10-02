@@ -4,12 +4,14 @@ import { HeroEffects } from './hero-effects.js';
 // Hero controls.
 const hero = document.querySelector('#hero');
 const scrollScene = hero?.querySelector('.hero-scroll-scene');
+const videoShell = hero?.querySelector('.hero-video-shell');
 const signupButton = hero?.querySelector('#heroSignupButton');
 const downloadButton = hero?.querySelector('#heroDownloadButton');
 const navbar = document.querySelector('.navbar');
 
 if (hero && scrollScene && navbar) {
     const MOBILE_QUERY = '(max-width: 767.98px)';
+    const PURPLE_LIGHT_HEIGHT = 18;
     const clamp = (value, minimum = 0, maximum = 1) => (
         Math.min(Math.max(value, minimum), maximum)
     );
@@ -110,9 +112,27 @@ if (hero && scrollScene && navbar) {
         scrollAnimationFrame = window.requestAnimationFrame(updateHero);
     };
 
+    const syncSceneHeight = () => {
+        if (!videoShell || mobileLayout.matches) {
+            scrollScene.style.removeProperty('--hero-scene-height');
+            return;
+        }
+
+        const sceneTop = scrollScene.getBoundingClientRect().top;
+        const videoBottom = videoShell.getBoundingClientRect().bottom;
+        const stickyHeight = Math.max(window.innerHeight - navbarHeight, 1);
+        const sceneHeight = Math.max(
+            Math.ceil(videoBottom - sceneTop + PURPLE_LIGHT_HEIGHT),
+            stickyHeight
+        );
+
+        scrollScene.style.setProperty('--hero-scene-height', `${sceneHeight}px`);
+    };
+
     const syncLayoutMetrics = () => {
         navbarHeight = navbar.offsetHeight;
         hero.style.setProperty('--hero-navbar-height', `${navbarHeight}px`);
+        syncSceneHeight();
         heroEffects?.resize();
     };
 
@@ -151,6 +171,14 @@ if (hero && scrollScene && navbar) {
         syncHeroEffects();
     });
     heroObserver.observe(hero);
+
+    const videoShellObserver = videoShell
+        ? new ResizeObserver(() => {
+            syncLayoutMetrics();
+            requestHeroUpdate();
+        })
+        : null;
+    videoShellObserver?.observe(videoShell);
 
     document.addEventListener('visibilitychange', syncHeroEffects);
     reducedMotion.addEventListener('change', () => {

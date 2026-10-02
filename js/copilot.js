@@ -16,13 +16,13 @@ export const copilotConfig = {
     positionY: -0.55,
     headHeight: 0.55,
     degreesHorizontal: 20,
-    degreesVerticalUp: 18,
+    degreesVerticalUp: 25,
     degreesVerticalDown: 14,
-    sensitivity: 1.15,
+    sensitivity: 0.35,
     rotationSpeed: 0.03,
     invertHorizontal: false,
     invertVertical: true,
-    offsetMouseY: -180,
+    offsetMouseY: -130,
     exposure: 1.45,
 
     lighting: {

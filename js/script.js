@@ -22,6 +22,7 @@ export class ModelStage {
         this.loader = new GLTFLoader();
         this.textureLoader = new THREE.TextureLoader();
         this.pointer = null;
+        this.tapPointer = null;
         this.frameID = null;
         this.lastFrameTime = 0;
         this.isMobile = window.matchMedia(MOBILE_QUERY).matches;
@@ -61,6 +62,15 @@ export class ModelStage {
             if (!followsPointer) return;
 
             this.pointer = { x: event.clientX, y: event.clientY };
+            this.requestRender();
+        }, { passive: true });
+        window.addEventListener('pointerdown', (event) => {
+            const followsTap = this.items.some((item) => (
+                item.visible && item.renderingEnabled && item.hasAction('follow-tap')
+            ));
+            if (!followsTap) return;
+
+            this.tapPointer = { x: event.clientX, y: event.clientY };
             this.requestRender();
         }, { passive: true });
         window.addEventListener('resize', () => this.resize());
@@ -228,7 +238,10 @@ export class ModelStage {
             const clipBottom = Math.min(viewportHeight, rect.bottom);
             if (clipRight <= clipLeft || clipBottom <= clipTop) continue;
 
-            keepRendering = item.update(this.pointer, elapsedTime) || keepRendering;
+            const interactionPoint = item.hasAction('follow-tap')
+                ? this.tapPointer
+                : this.pointer;
+            keepRendering = item.update(interactionPoint, elapsedTime) || keepRendering;
             item.camera.aspect = rect.width / rect.height;
             item.camera.updateProjectionMatrix();
 
@@ -403,7 +416,7 @@ class InteractiveModel {
     resize() {
         const baseDistance = this.options.cameraDistance ?? this.config.cameraDistance ?? 5;
         const heightRatio = this.container.clientHeight / 600;
-        const mobileDistanceFactor = Math.max(0.55, Math.min(1, heightRatio));
+        const mobileDistanceFactor = Math.max(0.9, Math.min(1, heightRatio));
         this.camera.position.z = baseDistance * (this.stage.isMobile ? mobileDistanceFactor : 1);
         this.camera.position.y = this.stage.isMobile ? this.basePositionY : 0;
     }
@@ -490,7 +503,9 @@ class InteractiveModel {
     }
 
     update(pointer, elapsedTime) {
-        if (!this.hasAction('follow-pointer') || !pointer) return false;
+        const followsInteraction = this.hasAction('follow-pointer')
+            || this.hasAction('follow-tap');
+        if (!followsInteraction || !pointer) return false;
 
         const rect = this.container.getBoundingClientRect();
         const mouseY = pointer.y + (this.config.offsetMouseY || 0);
