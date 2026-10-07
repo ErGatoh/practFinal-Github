@@ -302,7 +302,6 @@ export class HeroEffects {
 
         const left = Math.min(...visibleRects.map((rect) => rect.left));
         const right = Math.max(...visibleRects.map((rect) => rect.right));
-        const top = Math.min(...visibleRects.map((rect) => rect.top));
         const bottom = Math.max(...visibleRects.map((rect) => rect.bottom));
         const width = Math.min(
             HERO_EFFECT_CONFIG.glow.maxWidth,
@@ -400,6 +399,10 @@ export class HeroEffects {
     }
 
     updateParticles(time, elapsedSeconds) {
+        if (!this.interactionActive && this.aliveCount === 0) {
+            this.spawnAccumulator = 0;
+            return;
+        }
         const particleConfig = HERO_EFFECT_CONFIG.particles;
         const isTablet = this.tabletLayout.matches;
         const intervalRange = isTablet

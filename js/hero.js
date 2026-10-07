@@ -87,7 +87,10 @@ if (hero && scrollScene && navbar) {
             hero.style.setProperty('--hero-progress', '0');
             setHeroModelsRendering(!mobileLayout.matches);
             syncHeroEffects();
-            modelStage?.requestRender();
+            // Visible body models still need to follow their markers while scrolling.
+            if (!mobileLayout.matches || modelStage?.items.some(item => (
+                item.visible && item.renderingEnabled && item.model
+            ))) modelStage?.requestRender();
             scrollAnimationFrame = null;
             return;
         }

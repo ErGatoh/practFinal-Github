@@ -3,6 +3,8 @@ import { defineMorphIcon } from 'morphicons/element';
 // Icon paths and responsive limits.
 const MENU_ICON = 'M4 7h16M4 12h16M4 17h16';
 const CLOSE_ICON = 'M18 6 6 18M6 6l12 12';
+const LINK_CHEVRON_ICON = 'M9 6l6 6-6 6';
+const LINK_ARROW_ICON = 'M5 12h14m-6-6 6 6-6 6';
 const DESKTOP_QUERY = '(min-width: 1012px)';
 const MENU_STROKE_WIDTH = '2';
 const CLOSE_STROKE_WIDTH = '1.5';
@@ -14,6 +16,21 @@ defineMorphIcon();
 const menu = document.querySelector('#githubNavbar');
 const toggle = document.querySelector('.mobile-menu-toggle');
 const icon = document.querySelector('#mobileMenuIcon');
+const textLinks = document.querySelectorAll('.text-link');
+
+for (const link of textLinks) {
+    const linkIcon = link.querySelector('.text-link-icon');
+    if (!linkIcon) continue;
+
+    const setLinkIcon = (isActive) => {
+        linkIcon.morphTo(isActive ? LINK_ARROW_ICON : LINK_CHEVRON_ICON, 'snappy');
+    };
+
+    link.addEventListener('pointerenter', () => setLinkIcon(true));
+    link.addEventListener('pointerleave', () => setLinkIcon(false));
+    link.addEventListener('focus', () => setLinkIcon(true));
+    link.addEventListener('blur', () => setLinkIcon(false));
+}
 
 if (menu && toggle && icon) {
     // Keep the icon and labels in sync.

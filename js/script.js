@@ -241,9 +241,12 @@ export class ModelStage {
             const interactionPoint = item.hasAction('follow-tap')
                 ? this.tapPointer
                 : this.pointer;
-            keepRendering = item.update(interactionPoint, elapsedTime) || keepRendering;
-            item.camera.aspect = rect.width / rect.height;
-            item.camera.updateProjectionMatrix();
+            keepRendering = item.update(interactionPoint, elapsedTime, rect) || keepRendering;
+            const aspect = rect.width / rect.height;
+            if (item.camera.aspect !== aspect) {
+                item.camera.aspect = aspect;
+                item.camera.updateProjectionMatrix();
+            }
 
             this.renderer.toneMappingExposure = item.config.exposure ?? 1.25;
             this.renderer.setViewport(
@@ -310,6 +313,7 @@ class InteractiveModel {
     }
 
     setAction(action, isEnabled) {
+        if (this.actions.has(action) === isEnabled) return;
         if (isEnabled) {
             this.actions.add(action);
         } else {
@@ -502,12 +506,11 @@ class InteractiveModel {
         return this.loadPromise;
     }
 
-    update(pointer, elapsedTime) {
+    update(pointer, elapsedTime, rect) {
         const followsInteraction = this.hasAction('follow-pointer')
             || this.hasAction('follow-tap');
         if (!followsInteraction || !pointer) return false;
 
-        const rect = this.container.getBoundingClientRect();
         const mouseY = pointer.y + (this.config.offsetMouseY || 0);
         this.mouseNDC.x = ((pointer.x - rect.left) / rect.width) * 2 - 1;
         this.mouseNDC.y = -((mouseY - rect.top) / rect.height) * 2 + 1;

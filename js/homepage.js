@@ -1,4 +1,5 @@
 import { getModelInstance } from './models.js';
+import { updateMediaControl } from './media-control.js';
 
 const MOBILE_QUERY = '(max-width: 767.98px)';
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -9,10 +10,18 @@ const videos = Array.from(document.querySelectorAll('.body-demo-video'));
 const carouselTrack = document.querySelector('.customer-marquee-track');
 const carouselControl = document.querySelector('#carouselControl');
 const carouselControlPath = document.querySelector('#carouselControlPath');
-const PAUSE_PATH = 'M6 5h4v14H6V5zm8 0h4v14h-4V5z';
-const PLAY_PATH = 'M8 5v14l11-7z';
+const workflowVideoControl = document.querySelector('#workflowVideoControl');
+const workflowVideoControlPath = document.querySelector('#workflowVideoControlPath');
+const hero = document.querySelector('#hero');
+const backToTop = document.querySelector('#backToTop');
 let carouselPausedByUser = false;
 let pageActive = true;
+
+function updateWorkflowVideoControl(video) {
+    if (video) updateMediaControl(
+        workflowVideoControl, workflowVideoControlPath, video.paused || video.ended
+    );
+}
 
 function updateCopilotMotion() {
     if (!copilot) return;
@@ -26,22 +35,17 @@ function updateCopilotMotion() {
 function updateVideo(video, isVisible) {
     if (reducedMotion.matches || !isVisible) {
         video.pause();
+        updateWorkflowVideoControl(video);
         return;
     }
 
-    video.play().catch(() => {});
+    if (video.dataset.pausedByUser === 'true' || video.ended) return;
+    video.play().then(() => updateWorkflowVideoControl(video)).catch(() => {});
 }
 
 function updateCarouselControl() {
-    if (!carouselControl || !carouselControlPath) return;
-
-    carouselControlPath.setAttribute(
-        'd',
-        carouselPausedByUser ? PLAY_PATH : PAUSE_PATH
-    );
-    carouselControl.setAttribute(
-        'aria-label',
-        carouselPausedByUser ? 'Play carousel' : 'Pause carousel'
+    updateMediaControl(
+        carouselControl, carouselControlPath, carouselPausedByUser, 'carousel'
     );
 }
 
@@ -60,11 +64,49 @@ carouselControl?.addEventListener('click', () => {
     updateCarouselMotion();
 });
 
+workflowVideoControl?.addEventListener('click', () => {
+    const video = workflowVideoControl.closest('.product-showcase')?.querySelector('video');
+    if (!video) return;
+
+    if (video.paused || video.ended) {
+        if (video.ended) video.currentTime = 0;
+        video.dataset.pausedByUser = 'false';
+        video.play().catch(() => {});
+    } else {
+        video.dataset.pausedByUser = 'true';
+        video.pause();
+    }
+
+    updateWorkflowVideoControl(video);
+});
+
+for (const video of videos) {
+    for (const event of ['play', 'pause', 'ended']) {
+        video.addEventListener(event, () => updateWorkflowVideoControl(video));
+    }
+}
+
 const videoObserver = new IntersectionObserver((entries) => {
     for (const entry of entries) updateVideo(entry.target, entry.isIntersecting);
 }, { threshold: 0.15 });
 
 for (const video of videos) videoObserver.observe(video);
+
+const heroObserver = new IntersectionObserver(([entry]) => {
+    const heroIsAboveViewport = !entry.isIntersecting
+        && entry.boundingClientRect.bottom <= 0;
+    backToTop?.classList.toggle('is-visible', heroIsAboveViewport);
+    backToTop?.setAttribute('aria-hidden', String(!heroIsAboveViewport));
+}, { threshold: 0 });
+
+if (hero) heroObserver.observe(hero);
+
+backToTop?.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        behavior: reducedMotion.matches ? 'auto' : 'smooth'
+    });
+});
 
 reducedMotion.addEventListener('change', () => {
     updateCopilotMotion();
