@@ -1,11 +1,17 @@
 import { getModelInstance } from './models.js';
 import { updateMediaControl } from './media-control.js';
+import { CollaborationEffects } from './collaboration-effects.js';
 
 const MOBILE_QUERY = '(max-width: 767.98px)';
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const mobileLayout = window.matchMedia(MOBILE_QUERY);
 const copilotTarget = document.querySelector('.workflow-copilot');
 const copilot = getModelInstance(copilotTarget);
+const catTarget = document.querySelector('.collaboration-cat');
+const cat = getModelInstance(catTarget);
+if (cat?.stage.canvas?.classList.contains('collaboration-webgl-canvas')) {
+    cat.stage.addEffect(new CollaborationEffects(cat.stage));
+}
 const videos = Array.from(document.querySelectorAll('.body-demo-video'));
 const carouselTrack = document.querySelector('.customer-marquee-track');
 const carouselControl = document.querySelector('#carouselControl');
@@ -30,6 +36,15 @@ function updateCopilotMotion() {
     copilot.setAction('follow-pointer', motionEnabled && !mobileLayout.matches);
     copilot.setAction('follow-tap', motionEnabled && mobileLayout.matches);
     copilot.setRenderingEnabled(true);
+}
+
+function updateCatMotion() {
+    if (!cat) return;
+
+    const motionEnabled = !reducedMotion.matches;
+    cat.setAction('follow-pointer', motionEnabled && !mobileLayout.matches);
+    cat.setAction('follow-tap', motionEnabled && mobileLayout.matches);
+    cat.setRenderingEnabled(true);
 }
 
 function updateVideo(video, isVisible) {
@@ -110,6 +125,7 @@ backToTop?.addEventListener('click', () => {
 
 reducedMotion.addEventListener('change', () => {
     updateCopilotMotion();
+    updateCatMotion();
     updateCarouselMotion();
     for (const video of videos) {
         const rect = video.getBoundingClientRect();
@@ -131,6 +147,8 @@ window.addEventListener('focus', () => {
     updateCarouselMotion();
 });
 mobileLayout.addEventListener('change', updateCopilotMotion);
+mobileLayout.addEventListener('change', updateCatMotion);
 updateCopilotMotion();
+updateCatMotion();
 updateCarouselControl();
 updateCarouselMotion();

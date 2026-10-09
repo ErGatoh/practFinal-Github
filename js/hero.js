@@ -1,10 +1,11 @@
-import { getModelInstance, getModelStage } from './models.js';
-import { HeroEffects } from './hero-effects.js';
+import { getModelStage } from './models.js';
+import { HeroWebGL } from './hero-webgl.js';
 
 // Hero controls.
 const hero = document.querySelector('#hero');
 const scrollScene = hero?.querySelector('.hero-scroll-scene');
 const videoShell = hero?.querySelector('.hero-video-shell');
+const heroCanvas = hero?.querySelector('.hero-webgl-canvas');
 const signupButton = hero?.querySelector('#heroSignupButton');
 const downloadButton = hero?.querySelector('#heroDownloadButton');
 const navbar = document.querySelector('.navbar');
@@ -21,36 +22,16 @@ if (hero && scrollScene && navbar) {
     const modelStage = getModelStage();
     let heroEffects = null;
     let scrollAnimationFrame = null;
-    let isHeroVisible = true;
+    let isHeroVisible = hero.getBoundingClientRect().bottom > 0
+        && hero.getBoundingClientRect().top < window.innerHeight;
     let modelsRenderingEnabled = true;
     let navbarHeight = 0;
 
-    // Hero-only layout poses preserve the reusable model defaults.
-    const modelLayout = {
-        cat: { rotationX: -0.08, rotationY: -0.38, rotationZ: -0.14 },
-        copilot: { rotationX: -0.1, rotationY: 0.34, rotationZ: 0.17 },
-        duck: { rotationX: -0.05, rotationY: -0.48, rotationZ: -0.12 }
-    };
-    const heroModels = Array.from(hero.querySelectorAll('[data-hero-model]'))
-        .map((container) => ({
-            name: container.dataset.heroModel,
-            instance: getModelInstance(container)
-        }))
-        .filter(({ name, instance }) => instance && modelLayout[name]);
-
-    for (const { name, instance } of heroModels) {
-        instance.setPose({ ...modelLayout[name], offsetY: 0 });
-    }
-
     const ensureHeroEffects = () => {
-        if (heroEffects || mobileLayout.matches || !modelStage) return heroEffects;
+        if (heroEffects || !isHeroVisible || mobileLayout.matches || !heroCanvas) return heroEffects;
 
-        heroEffects = new HeroEffects({
-            stage: modelStage,
-            hero,
-            models: heroModels
-        });
-        modelStage.addEffect(heroEffects);
+        heroEffects = new HeroWebGL({ hero, canvas: heroCanvas });
+        heroEffects.load();
         return heroEffects;
     };
 
@@ -73,7 +54,6 @@ if (hero && scrollScene && navbar) {
 
     const setHeroModelsRendering = (isEnabled) => {
         modelsRenderingEnabled = isEnabled;
-        for (const { instance } of heroModels) instance.setRenderingEnabled(isEnabled);
         heroEffects?.setRenderingEnabled(isEnabled && !mobileLayout.matches);
     };
 
@@ -106,6 +86,7 @@ if (hero && scrollScene && navbar) {
         setHeroModelsRendering(heroProgress < 0.98);
         syncHeroEffects();
         heroEffects?.resize();
+        heroEffects?.requestRender();
         modelStage?.requestRender();
         scrollAnimationFrame = null;
     };
@@ -137,6 +118,7 @@ if (hero && scrollScene && navbar) {
         hero.style.setProperty('--hero-navbar-height', `${navbarHeight}px`);
         syncSceneHeight();
         heroEffects?.resize();
+        heroEffects?.requestRender();
     };
 
     const setMotionSource = (source, isActive) => {
@@ -183,7 +165,10 @@ if (hero && scrollScene && navbar) {
         : null;
     videoShellObserver?.observe(videoShell);
 
-    document.addEventListener('visibilitychange', syncHeroEffects);
+    document.addEventListener('visibilitychange', () => {
+        syncHeroEffects();
+        if (!document.hidden) heroEffects?.requestRender();
+    });
     reducedMotion.addEventListener('change', () => {
         syncHeroEffects();
         requestHeroUpdate();

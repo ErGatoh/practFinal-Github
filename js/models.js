@@ -11,6 +11,7 @@ const MODEL_CONFIGS = Object.freeze({
 
 let modelStage = null;
 const modelInstances = new WeakMap();
+const localStages = new WeakMap();
 
 function readActions(container) {
     return (container.dataset.modelActions || '')
@@ -23,16 +24,25 @@ function readNumber(container, name) {
     return Number.isFinite(value) ? value : undefined;
 }
 
-// Mounts every model marker while keeping one shared WebGL renderer.
+// Mounts model markers in either their own canvas or the shared renderer.
 export function mountModels(root = document) {
     const containers = Array.from(root.querySelectorAll('[data-model]'))
         .filter((container) => MODEL_CONFIGS[container.dataset.model]);
 
     if (!containers.length) return null;
-    if (!modelStage) modelStage = new ModelStage();
-
+    let mountedStage = null;
     for (const container of containers) {
-        const instance = modelStage.add(
+        if (modelInstances.has(container)) continue;
+        const canvas = container.querySelector('.workflow-copilot-canvas')
+            || (container.dataset.model === 'cat'
+                ? container.closest('.collaboration-section')?.querySelector('.collaboration-webgl-canvas')
+                : null);
+        if (canvas && !localStages.has(canvas)) {
+            localStages.set(canvas, new ModelStage({ canvas }));
+        }
+        if (!canvas && !modelStage) modelStage = new ModelStage();
+        const stage = canvas ? localStages.get(canvas) : modelStage;
+        const instance = stage.add(
             MODEL_CONFIGS[container.dataset.model],
             container,
             {
@@ -43,9 +53,10 @@ export function mountModels(root = document) {
             }
         );
         if (instance) modelInstances.set(container, instance);
+        mountedStage = stage;
     }
 
-    return modelStage;
+    return modelStage || mountedStage;
 }
 
 // Returns the independent controller for one mounted container.

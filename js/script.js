@@ -12,8 +12,9 @@ const DEFAULT_LIGHTING = {
 };
 
 export class ModelStage {
-    constructor() {
-        // Shared resources for every model instance.
+    constructor({ canvas = null } = {}) {
+        // Model resources belong to this renderer, whether local or shared.
+        this.canvas = canvas;
         this.items = [];
         this.effects = [];
         this.modelCache = new Map();
@@ -28,6 +29,7 @@ export class ModelStage {
         this.isMobile = window.matchMedia(MOBILE_QUERY).matches;
 
         this.renderer = new THREE.WebGLRenderer({
+            canvas: canvas || undefined,
             antialias: !this.isMobile,
             alpha: true,
             premultipliedAlpha: true,
@@ -38,9 +40,14 @@ export class ModelStage {
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.autoClear = false;
         this.renderer.setClearColor(0x000000, 0);
-        this.renderer.domElement.className = 'model-canvas';
-        this.renderer.domElement.setAttribute('aria-hidden', 'true');
-        document.body.appendChild(this.renderer.domElement);
+        if (!canvas) {
+            this.renderer.domElement.className = 'model-canvas';
+            this.renderer.domElement.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(this.renderer.domElement);
+        } else {
+            this.resizeObserver = new ResizeObserver(() => this.resize());
+            this.resizeObserver.observe(canvas.parentElement);
+        }
 
         // Load and render only visible containers.
         this.observer = new IntersectionObserver((entries) => {
@@ -163,7 +170,11 @@ export class ModelStage {
 
         const pixelRatioLimit = this.isMobile ? 1 : 2;
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, pixelRatioLimit));
-        this.renderer.setSize(window.innerWidth, window.innerHeight, false);
+        this.renderer.setSize(
+            this.canvas ? this.canvas.clientWidth : window.innerWidth,
+            this.canvas ? this.canvas.clientHeight : window.innerHeight,
+            false
+        );
         this.renderer.shadowMap.enabled = !this.isMobile;
 
         for (const item of this.items) {
@@ -183,7 +194,11 @@ export class ModelStage {
 
     clear() {
         this.renderer.setScissorTest(false);
-        this.renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+        this.renderer.setViewport(
+            0, 0,
+            this.canvas ? this.canvas.clientWidth : window.innerWidth,
+            this.canvas ? this.canvas.clientHeight : window.innerHeight
+        );
         this.renderer.clear(true, true, true);
     }
 
@@ -238,30 +253,41 @@ export class ModelStage {
             const clipBottom = Math.min(viewportHeight, rect.bottom);
             if (clipRight <= clipLeft || clipBottom <= clipTop) continue;
 
-            const interactionPoint = item.hasAction('follow-tap')
-                ? this.tapPointer
-                : this.pointer;
-            keepRendering = item.update(interactionPoint, elapsedTime, rect) || keepRendering;
             const aspect = rect.width / rect.height;
             if (item.camera.aspect !== aspect) {
                 item.camera.aspect = aspect;
                 item.camera.updateProjectionMatrix();
             }
+            if (this.canvas) item.camera.updateMatrixWorld();
+            const interactionPoint = item.hasAction('follow-tap')
+                ? this.tapPointer
+                : this.pointer;
+            keepRendering = item.update(interactionPoint, elapsedTime, rect) || keepRendering;
 
             this.renderer.toneMappingExposure = item.config.exposure ?? 1.25;
-            this.renderer.setViewport(
-                rect.left,
-                viewportHeight - rect.bottom,
-                rect.width,
-                rect.height
-            );
-            this.renderer.setScissor(
-                clipLeft,
-                viewportHeight - clipBottom,
-                clipRight - clipLeft,
-                clipBottom - clipTop
-            );
-            this.renderer.setScissorTest(true);
+            if (this.canvas) {
+                const canvasRect = this.canvas.getBoundingClientRect();
+                this.renderer.setViewport(
+                    rect.left - canvasRect.left,
+                    canvasRect.bottom - rect.bottom,
+                    rect.width,
+                    rect.height
+                );
+            } else {
+                this.renderer.setViewport(
+                    rect.left,
+                    viewportHeight - rect.bottom,
+                    rect.width,
+                    rect.height
+                );
+                this.renderer.setScissor(
+                    clipLeft,
+                    viewportHeight - clipBottom,
+                    clipRight - clipLeft,
+                    clipBottom - clipTop
+                );
+                this.renderer.setScissorTest(true);
+            }
             this.renderer.clearDepth();
             this.renderer.render(item.scene, item.camera);
         }
