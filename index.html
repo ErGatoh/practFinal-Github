@@ -1521,19 +1521,23 @@
       <section class="content-section stories-section" id="customer-stories">
         <div class="container-xl px-4 px-md-5">
           <div class="section-heading text-center mx-auto">
-            <h2>
-              From startups to enterprises, GitHub scales with teams of any size
-              in any industry.
-            </h2>
+            <div class="stories-duck mx-auto" data-model="duck"
+              data-model-actions="follow-pointer follow-tap" aria-hidden="true">
+              <canvas class="stories-duck-canvas" aria-hidden="true"></canvas>
+            </div>
+            <h2>From startups to enterprises,</h2>
+            <p class="stories-heading-line">GitHub scales with teams</p>
+            <p class="stories-heading-line">of any size in any industry.</p>
           </div>
           <div
-            class="story-labels d-flex flex-wrap justify-content-center gap-2 mb-5"
+            class="story-labels d-flex align-items-center justify-content-center rounded-pill mx-auto mb-5"
             aria-label="Customer story categories"
           >
-            <span class="active">By industry</span><span>By size</span
-            ><span>By use case</span>
+            <div class="active rounded-pill">By industry</div>
+            <div class="rounded-pill">By size</div>
+            <div class="rounded-pill">By use case</div>
           </div>
-          <div class="row g-3">
+          <div class="row g-0">
             <div class="col-md-4">
               <article class="story-card h-100 overflow-hidden">
                 <img src="assets/story-figma.webp" alt="Figma team" /><img

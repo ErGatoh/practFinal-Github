@@ -9,6 +9,7 @@ const copilotTarget = document.querySelector('.workflow-copilot');
 const copilot = getModelInstance(copilotTarget);
 const catTarget = document.querySelector('.collaboration-cat');
 const cat = getModelInstance(catTarget);
+const duck = getModelInstance(document.querySelector('.stories-duck'));
 if (cat?.stage.canvas?.classList.contains('collaboration-webgl-canvas')) {
     cat.stage.addEffect(new CollaborationEffects(cat.stage));
 }
@@ -45,6 +46,15 @@ function updateCatMotion() {
     cat.setAction('follow-pointer', motionEnabled && !mobileLayout.matches);
     cat.setAction('follow-tap', motionEnabled && mobileLayout.matches);
     cat.setRenderingEnabled(true);
+}
+
+function updateDuckMotion() {
+    if (!duck) return;
+
+    const motionEnabled = !reducedMotion.matches;
+    duck.setAction('follow-pointer', motionEnabled && !mobileLayout.matches);
+    duck.setAction('follow-tap', motionEnabled && mobileLayout.matches);
+    duck.setRenderingEnabled(true);
 }
 
 function updateVideo(video, isVisible) {
@@ -126,6 +136,7 @@ backToTop?.addEventListener('click', () => {
 reducedMotion.addEventListener('change', () => {
     updateCopilotMotion();
     updateCatMotion();
+    updateDuckMotion();
     updateCarouselMotion();
     for (const video of videos) {
         const rect = video.getBoundingClientRect();
@@ -148,7 +159,9 @@ window.addEventListener('focus', () => {
 });
 mobileLayout.addEventListener('change', updateCopilotMotion);
 mobileLayout.addEventListener('change', updateCatMotion);
+mobileLayout.addEventListener('change', updateDuckMotion);
 updateCopilotMotion();
 updateCatMotion();
+updateDuckMotion();
 updateCarouselControl();
 updateCarouselMotion();

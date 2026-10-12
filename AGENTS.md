@@ -17,3 +17,5 @@ Para desarrollar la interfaz, el agente utilizará Bootstrap siempre que sea pos
 El agente seguirá fielmente las instrucciones del usuario y respetará el significado literal y el alcance expresado en cada petición. No reinterpretará una orden de forma que produzca un resultado contrario, diferente o más amplio que el solicitado. No sustituirá las decisiones del usuario por sus propias preferencias ni añadirá supuestos, mejoras o cambios no pedidos.
 
 Si una instrucción admite varias interpretaciones, entra en conflicto con otra instrucción vigente o no puede ejecutarse exactamente como se ha solicitado, el agente detendrá esa parte del trabajo y pedirá una aclaración antes de actuar. Cuando la instrucción sea clara, la ejecutará tal como fue indicada.
+
+El agente no modificará el navbar por iniciativa propia ni como parte de cambios relacionados o mejoras adicionales. Solo podrá modificarlo cuando el usuario lo solicite explícitamente, y limitará esos cambios al alcance exacto aprobado.

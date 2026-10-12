@@ -33,7 +33,7 @@ export function mountModels(root = document) {
     let mountedStage = null;
     for (const container of containers) {
         if (modelInstances.has(container)) continue;
-        const canvas = container.querySelector('.workflow-copilot-canvas')
+        const canvas = container.querySelector('.workflow-copilot-canvas, .stories-duck-canvas')
             || (container.dataset.model === 'cat'
                 ? container.closest('.collaboration-section')?.querySelector('.collaboration-webgl-canvas')
                 : null);
