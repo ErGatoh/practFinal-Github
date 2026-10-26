@@ -313,8 +313,8 @@ class InteractiveModel {
         this.renderingEnabled = true;
         this.model = null;
         this.loadPromise = null;
-        this.mouseNDC = new THREE.Vector2(0, 0);
         this.headPosition = new THREE.Vector3();
+        this.projectedHead = new THREE.Vector3();
         this.basePosition = new THREE.Vector3(0, this.basePositionY, 0);
         this.baseRotation = new THREE.Euler();
         this.pointerRotation = new THREE.Euler();
@@ -505,6 +505,18 @@ class InteractiveModel {
                 this.baseRotation.copy(this.model.rotation);
                 this.applyCompositePose();
 
+                const face = this.model.getObjectByName('face')
+                    || this.model.getObjectByName('eyes')
+                    || this.model.getObjectByName('eyeball');
+                if (face?.isMesh) {
+                    if (!face.geometry.boundingBox) face.geometry.computeBoundingBox();
+                    face.geometry.boundingBox.getCenter(this.headPosition);
+                    face.localToWorld(this.headPosition);
+                } else {
+                    this.headPosition.set(0, this.config.headHeight, 0);
+                    this.model.localToWorld(this.headPosition);
+                }
+
                 this.model.traverse((child) => {
                     if (!child.isMesh) return;
 
@@ -537,19 +549,16 @@ class InteractiveModel {
             || this.hasAction('follow-tap');
         if (!followsInteraction || !pointer) return false;
 
-        const mouseY = pointer.y + (this.config.offsetMouseY || 0);
-        this.mouseNDC.x = ((pointer.x - rect.left) / rect.width) * 2 - 1;
-        this.mouseNDC.y = -((mouseY - rect.top) / rect.height) * 2 + 1;
+        this.projectedHead.copy(this.headPosition).project(this.camera);
+        const headX = rect.left + (this.projectedHead.x + 1) * rect.width / 2;
+        const headY = rect.top + (1 - this.projectedHead.y) * rect.height / 2;
+        const horizontalReach = Math.max(window.innerWidth * 0.65, rect.width);
+        const verticalReach = Math.max(window.innerHeight * 0.65, rect.height);
 
-        this.headPosition.set(0, this.config.headHeight, 0);
-        this.model.localToWorld(this.headPosition);
-        this.headPosition.project(this.camera);
-
-        const deltaX = this.mouseNDC.x - this.headPosition.x;
-        const deltaY = this.mouseNDC.y - this.headPosition.y;
-
-        let targetRotationY = deltaX * this.config.sensitivity;
-        let targetRotationX = deltaY * this.config.sensitivity;
+        let targetRotationY = Math.atan2(pointer.x - headX, horizontalReach)
+            * this.config.sensitivity;
+        let targetRotationX = -Math.atan2(pointer.y - headY, verticalReach)
+            * this.config.sensitivity;
         if (this.config.invertHorizontal) targetRotationY = -targetRotationY;
         if (this.config.invertVertical) targetRotationX = -targetRotationX;
 

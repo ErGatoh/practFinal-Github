@@ -819,6 +819,30 @@ body {
   padding-bottom: clamp(7rem, 12vw, 12rem);
 }
 
+.workflow-section,
+.security-section,
+.collaboration-section,
+.stories-section {
+  --content-gutter: clamp(1.5rem, 6.8vw, 8.5rem);
+}
+
+.workflow-intro > .container-xl,
+.security-section > .container-xl,
+.collaboration-intro > .container-xl,
+.collaboration-section > .container-xl,
+.stories-section > .container-xl {
+  max-width: 2000px;
+  padding-inline: var(--content-gutter) !important;
+}
+
+.workflow-contained,
+.workflow-section .automation-feature,
+.security-showcase {
+  width: calc(100% - 2 * var(--content-gutter));
+  max-width: 1728px;
+  margin-inline: auto;
+}
+
 .workflow-intro {
   min-height: 680px;
   padding-top: 280px;
@@ -917,10 +941,6 @@ body {
   border-radius: clamp(1.5rem, 2vw, 2.25rem) clamp(1.5rem, 2vw, 2.25rem) 0 0;
   background: linear-gradient(180deg, #17151f 0%, #17151f 48%, #35587d 100%);
   isolation: isolate;
-}
-
-.workflow-contained {
-  margin-inline: 20px;
 }
 
 .workflow-video-particles {
@@ -1285,6 +1305,7 @@ body {
 }
 
 .collaboration-section {
+  padding-bottom: clamp(2rem, 4vw, 4rem);
   background: #000000;
 }
 
@@ -1342,8 +1363,7 @@ body {
 
 .stories-duck {
   width: min(100%, 16.875rem);
-  height: clamp(40.5rem, 20vw, 15.3125rem);
-  margin-bottom: 0.625rem;
+  height: 10rem;
 }
 
 .stories-duck-canvas {
@@ -1687,6 +1707,10 @@ body {
 
 /* Mobile layout. */
 @media (max-width: 767.98px) {
+  .stories-duck {
+    height: 9rem;
+  }
+
   .hero-section {
     --page-gutter: 1.5rem;
   }
