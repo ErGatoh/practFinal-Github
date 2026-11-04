@@ -30,6 +30,9 @@
     <script type="module" src="js/homepage.js"></script>
     <script type="module" src="js/cta-webgl.js"></script>
     <script type="module" src="js/security-shield.js"></script>
+    <script type="module" src="js/contract-plan-aura.js"></script>
+    <script type="module" src="js/contract-form-navigation.js"></script>
+    <script type="module" src="js/contract-form-nebula.js"></script>
   </head>
   <body class="bg-dark text-light">
     <!-- GitHub-style navbar -->
@@ -1106,6 +1109,588 @@
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section class="contract-form-section" aria-labelledby="contractFormTitle">
+        <canvas class="contract-form-nebula" aria-hidden="true"></canvas>
+        <div class="container-xl px-4 px-md-5 position-relative">
+          <div class="contract-form-intro mb-5">
+            <p class="contract-form-eyebrow mb-2">GitHub Copilot</p>
+            <h2 id="contractFormTitle" class="mb-3">Choose your Copilot plan</h2>
+            <p class="contract-form-description mb-0">
+              Find the right AI coding companion for your workflow.
+            </p>
+          </div>
+
+          <form
+            class="contract-form"
+            action="#"
+            method="get"
+            target="_self"
+            name="copilotContract"
+            novalidate
+          >
+            <div class="contract-progress mb-4" aria-label="Form progress" aria-live="polite">
+              <span id="contractCurrentStep" class="fw-semibold">Step 1 of 6</span>
+              <span id="contractCurrentStepLabel">Choose a plan</span>
+            </div>
+
+            <div class="contract-step-stage">
+            <fieldset
+              class="border-0 p-0 m-0"
+              data-contract-step="1"
+              data-step-label="Choose a plan"
+            >
+              <legend class="contract-plan-legend mb-4">Select one plan</legend>
+              <div class="contract-plan-stage position-relative">
+                <canvas class="contract-plan-aura" aria-hidden="true"></canvas>
+                <div class="row g-4 position-relative">
+                  <div class="col-12 col-xl-4">
+                    <label class="contract-plan-frame d-block h-100">
+                      <span class="contract-plan-card card h-100 p-4 d-flex flex-column">
+                        <span class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                          <span class="contract-plan-name fw-semibold">Copilot Pro</span>
+                          <input
+                            class="visually-hidden"
+                            type="radio"
+                            name="copilotPlan"
+                            value="pro"
+                          />
+                        </span>
+                        <span class="contract-plan-audience mb-3">For individual developers</span>
+                        <span class="contract-plan-price mb-4">$10 USD <small>/ month</small></span>
+                        <span class="contract-plan-feature mb-2">Unlimited code suggestions</span>
+                        <span class="contract-plan-feature mb-2">Choice of AI models</span>
+                        <span class="contract-plan-feature">Agent mode and code review</span>
+                      </span>
+                    </label>
+                  </div>
+
+                  <div class="col-12 col-xl-4">
+                    <label class="contract-plan-frame d-block h-100">
+                      <span class="contract-plan-card card h-100 p-4 d-flex flex-column">
+                        <span class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                          <span class="contract-plan-name fw-semibold">Copilot Pro+</span>
+                          <input
+                            class="visually-hidden"
+                            type="radio"
+                            name="copilotPlan"
+                            value="pro-plus"
+                          />
+                        </span>
+                        <span class="contract-plan-audience mb-3">For AI power users</span>
+                        <span class="contract-plan-price mb-4">$39 USD <small>/ month</small></span>
+                        <span class="contract-plan-feature mb-2">Everything in Copilot Pro</span>
+                        <span class="contract-plan-feature mb-2">Higher monthly AI credit allowance</span>
+                        <span class="contract-plan-feature">Access to premium models</span>
+                      </span>
+                    </label>
+                  </div>
+
+                  <div class="col-12 col-xl-4">
+                    <label class="contract-plan-frame d-block h-100">
+                      <span class="contract-plan-card card h-100 p-4 d-flex flex-column">
+                        <span class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                          <span class="contract-plan-name fw-semibold">Copilot Max</span>
+                          <input
+                            class="visually-hidden"
+                            type="radio"
+                            name="copilotPlan"
+                            value="max"
+                          />
+                        </span>
+                        <span class="contract-plan-audience mb-3">For high-volume AI users</span>
+                        <span class="contract-plan-price mb-4">$100 USD <small>/ month</small></span>
+                        <span class="contract-plan-feature mb-2">Everything in Copilot Pro+</span>
+                        <span class="contract-plan-feature mb-2">Highest individual AI credit allowance</span>
+                        <span class="contract-plan-feature">Priority access to premium models</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset
+              class="contract-addon-step border-0 p-0 m-0"
+              data-contract-step="2"
+              data-step-label="Choose add-ons"
+              hidden
+            >
+              <legend class="contract-plan-legend mb-2">Choose optional add-ons</legend>
+              <p class="contract-addon-description mb-4">
+                Select none, one, or several usage-based GitHub services.
+              </p>
+
+              <div
+                id="codespacesStorageDependency"
+                class="contract-attention alert mb-4"
+                role="note"
+              >
+                <svg class="contract-warning-icon flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 3 2 21h20L12 3Z" />
+                  <path d="M12 9v5" />
+                  <path d="M12 18h.01" />
+                </svg>
+                <span>Codespaces storage requires the 2-core Codespaces environment in this simulation.
+                Prices use different billing units and will be itemized separately.</span>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-12 col-xl-4">
+                  <label class="contract-addon-card card h-100 p-4">
+                    <span class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                      <span class="contract-addon-name fw-semibold">Codespaces compute</span>
+                      <input
+                        class="visually-hidden"
+                        type="checkbox"
+                        name="copilotAddons"
+                        value="codespaces-compute"
+                      />
+                      <svg class="contract-addon-check flex-shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" stroke="currentColor" stroke-width="2"/><path d="m7 12 3.5 3.5L17 9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    <span class="contract-addon-description mb-3">
+                      Cloud development environment with a 2-core machine.
+                    </span>
+                    <span class="contract-addon-price mt-auto">
+                      $0.18 USD <small>/ hour</small>
+                    </span>
+                  </label>
+                </div>
+
+                <div class="col-12 col-xl-4">
+                  <label class="contract-addon-card card h-100 p-4">
+                    <span class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                      <span class="contract-addon-name fw-semibold">Codespaces storage</span>
+                      <input
+                        class="visually-hidden"
+                        type="checkbox"
+                        name="copilotAddons"
+                        value="codespaces-storage"
+                        aria-describedby="codespacesStorageDependency"
+                      />
+                      <svg class="contract-addon-check flex-shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" stroke="currentColor" stroke-width="2"/><path d="m7 12 3.5 3.5L17 9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    <span class="contract-addon-description mb-3">
+                      Storage used by codespaces and prebuilds.
+                    </span>
+                    <span class="contract-addon-price mt-auto">
+                      $0.07 USD <small>/ GB-month</small>
+                    </span>
+                  </label>
+                </div>
+
+                <div class="col-12 col-xl-4">
+                  <label class="contract-addon-card card h-100 p-4">
+                    <span class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                      <span class="contract-addon-name fw-semibold">Git Large File Storage</span>
+                      <input
+                        class="visually-hidden"
+                        type="checkbox"
+                        name="copilotAddons"
+                        value="git-lfs"
+                      />
+                      <svg class="contract-addon-check flex-shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" stroke="currentColor" stroke-width="2"/><path d="m7 12 3.5 3.5L17 9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    <span class="contract-addon-description mb-3">
+                      50 GB of storage and 50 GB of bandwidth for large files.
+                    </span>
+                    <span class="contract-addon-price mt-auto">
+                      $5 USD <small>/ month</small>
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset
+              class="contract-personal-step border-0 p-0 m-0"
+              data-contract-step="3"
+              data-step-label="Personal details"
+              hidden
+            >
+              <legend class="contract-plan-legend mb-2">Enter your personal details</legend>
+              <p class="contract-personal-description mb-4">
+                All fields are required. You must be at least 18 years old to continue.
+              </p>
+
+              <div class="row g-4">
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="firstName">
+                    First name <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="firstName"
+                    class="form-control"
+                    type="text"
+                    name="firstName"
+                    autocomplete="given-name"
+                    required
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="lastName">
+                    Last name <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="lastName"
+                    class="form-control"
+                    type="text"
+                    name="lastName"
+                    autocomplete="family-name"
+                    required
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="dni">
+                    DNI <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="dni"
+                    class="form-control"
+                    type="text"
+                    name="dni"
+                    maxlength="9"
+                    autocomplete="off"
+                    aria-describedby="dniHelp"
+                    required
+                  />
+                  <div id="dniHelp" class="contract-field-help form-text">Eight digits and a control letter.</div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="phone">
+                    Phone number <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="phone"
+                    class="form-control"
+                    type="tel"
+                    name="phone"
+                    autocomplete="tel"
+                    aria-describedby="phoneHelp"
+                    required
+                  />
+                  <div id="phoneHelp" class="contract-field-help form-text">Spanish phone number.</div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="email">
+                    Email address <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="email"
+                    class="form-control"
+                    type="email"
+                    name="email"
+                    autocomplete="email"
+                    required
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="emailConfirmation">
+                    Confirm email address <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="emailConfirmation"
+                    class="form-control"
+                    type="email"
+                    name="emailConfirmation"
+                    autocomplete="off"
+                    required
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="birthDate">
+                    Date of birth <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="birthDate"
+                    class="form-control"
+                    type="date"
+                    name="birthDate"
+                    autocomplete="bday"
+                    aria-describedby="birthDateHelp"
+                    required
+                  />
+                  <div id="birthDateHelp" class="contract-field-help form-text">Applicants must be 18 or older.</div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset
+              class="contract-address-step border-0 p-0 m-0"
+              data-contract-step="4"
+              data-step-label="Address"
+              hidden
+            >
+              <legend class="contract-plan-legend mb-2">Enter your address</legend>
+              <p class="contract-address-description mb-4">
+                This simulation only accepts addresses in Spain. All fields are required unless marked optional.
+              </p>
+              <input type="hidden" name="country" value="ES" />
+
+              <div class="row g-4">
+                <div class="col-12 col-md-4">
+                  <label class="form-label" for="streetType">
+                    Street type <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <select id="streetType" class="form-select" name="streetType" required>
+                    <option value="" selected disabled>Select a street type</option>
+                    <option value="calle">Calle</option>
+                    <option value="avenida">Avenida</option>
+                    <option value="plaza">Plaza</option>
+                    <option value="paseo">Paseo</option>
+                    <option value="carretera">Carretera</option>
+                    <option value="camino">Camino</option>
+                    <option value="ronda">Ronda</option>
+                    <option value="travesia">Travesía</option>
+                    <option value="urbanizacion">Urbanización</option>
+                  </select>
+                </div>
+
+                <div class="col-12 col-md-8">
+                  <label class="form-label" for="streetName">
+                    Street name <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="streetName"
+                    class="form-control"
+                    type="text"
+                    name="streetName"
+                    autocomplete="address-line1"
+                    required
+                  />
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-4">
+                  <label class="form-label" for="streetNumber">
+                    Number <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="streetNumber"
+                    class="form-control"
+                    type="text"
+                    name="streetNumber"
+                    required
+                  />
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-4">
+                  <label class="form-label" for="addressExtra">Floor or door <span class="fw-normal">(optional)</span></label>
+                  <input
+                    id="addressExtra"
+                    class="form-control"
+                    type="text"
+                    name="addressExtra"
+                    autocomplete="address-line2"
+                  />
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label class="form-label" for="postalCode">
+                    Postal code <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="postalCode"
+                    class="form-control"
+                    type="text"
+                    name="postalCode"
+                    inputmode="numeric"
+                    maxlength="5"
+                    pattern="[0-9]{5}"
+                    autocomplete="postal-code"
+                    aria-describedby="postalCodeHelp"
+                    required
+                  />
+                  <div id="postalCodeHelp" class="contract-field-help form-text">Five digits, with a province prefix from 01 to 52.</div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="city">
+                    City or town <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="city"
+                    class="form-control"
+                    type="text"
+                    name="city"
+                    autocomplete="address-level2"
+                    required
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="province">
+                    Province <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <select
+                    id="province"
+                    class="form-select"
+                    name="province"
+                    autocomplete="address-level1"
+                    required
+                  >
+                    <option value="" selected disabled>Select a province</option>
+                    <option value="01">Álava</option>
+                    <option value="02">Albacete</option>
+                    <option value="03">Alicante</option>
+                    <option value="04">Almería</option>
+                    <option value="05">Ávila</option>
+                    <option value="06">Badajoz</option>
+                    <option value="07">Illes Balears</option>
+                    <option value="08">Barcelona</option>
+                    <option value="09">Burgos</option>
+                    <option value="10">Cáceres</option>
+                    <option value="11">Cádiz</option>
+                    <option value="12">Castellón</option>
+                    <option value="13">Ciudad Real</option>
+                    <option value="14">Córdoba</option>
+                    <option value="15">A Coruña</option>
+                    <option value="16">Cuenca</option>
+                    <option value="17">Girona</option>
+                    <option value="18">Granada</option>
+                    <option value="19">Guadalajara</option>
+                    <option value="20">Gipuzkoa</option>
+                    <option value="21">Huelva</option>
+                    <option value="22">Huesca</option>
+                    <option value="23">Jaén</option>
+                    <option value="24">León</option>
+                    <option value="25">Lleida</option>
+                    <option value="26">La Rioja</option>
+                    <option value="27">Lugo</option>
+                    <option value="28">Madrid</option>
+                    <option value="29">Málaga</option>
+                    <option value="30">Murcia</option>
+                    <option value="31">Navarra</option>
+                    <option value="32">Ourense</option>
+                    <option value="33">Asturias</option>
+                    <option value="34">Palencia</option>
+                    <option value="35">Las Palmas</option>
+                    <option value="36">Pontevedra</option>
+                    <option value="37">Salamanca</option>
+                    <option value="38">Santa Cruz de Tenerife</option>
+                    <option value="39">Cantabria</option>
+                    <option value="40">Segovia</option>
+                    <option value="41">Sevilla</option>
+                    <option value="42">Soria</option>
+                    <option value="43">Tarragona</option>
+                    <option value="44">Teruel</option>
+                    <option value="45">Toledo</option>
+                    <option value="46">Valencia</option>
+                    <option value="47">Valladolid</option>
+                    <option value="48">Bizkaia</option>
+                    <option value="49">Zamora</option>
+                    <option value="50">Zaragoza</option>
+                    <option value="51">Ceuta</option>
+                    <option value="52">Melilla</option>
+                  </select>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset
+              class="contract-payment-step border-0 p-0 m-0"
+              data-contract-step="5"
+              data-step-label="Payment"
+              hidden
+            >
+              <legend class="contract-plan-legend mb-3">Enter simulated card details</legend>
+
+              <p class="contract-payment-description mb-4">
+                Use fictional card details only. This form is not connected to a payment service.
+              </p>
+
+              <div class="row g-4">
+                <div class="col-12">
+                  <label class="form-label" for="cardholderName">
+                    Cardholder name <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="cardholderName"
+                    class="form-control"
+                    type="text"
+                    name="cardholderName"
+                    autocomplete="off"
+                    required
+                  />
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label" for="cardNumber">
+                    Card number <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="cardNumber"
+                    class="form-control"
+                    type="text"
+                    name="cardNumber"
+                    inputmode="numeric"
+                    maxlength="19"
+                    pattern="[0-9]{4}( [0-9]{4}){3}|[0-9]{16}"
+                    placeholder="0000 0000 0000 0000"
+                    autocomplete="off"
+                    aria-describedby="cardNumberHelp"
+                    required
+                  />
+                  <div id="cardNumberHelp" class="contract-field-help form-text">Sixteen fictional digits, with or without spaces.</div>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <label class="form-label" for="cardExpiry">
+                    Expiry date <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="cardExpiry"
+                    class="form-control"
+                    type="text"
+                    name="cardExpiry"
+                    inputmode="numeric"
+                    maxlength="5"
+                    pattern="(0[1-9]|1[0-2])/[0-9]{2}"
+                    placeholder="MM/AA"
+                    autocomplete="off"
+                    aria-describedby="cardExpiryHelp"
+                    required
+                  />
+                  <div id="cardExpiryHelp" class="contract-field-help form-text">Use the MM/AA format.</div>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <label class="form-label" for="cardCvv">
+                    CVV <span class="contract-required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="cardCvv"
+                    class="form-control"
+                    type="text"
+                    name="cardCvv"
+                    inputmode="numeric"
+                    maxlength="3"
+                    pattern="[0-9]{3}"
+                    placeholder="000"
+                    autocomplete="off"
+                    aria-describedby="cardCvvHelp"
+                    required
+                  />
+                  <div id="cardCvvHelp" class="contract-field-help form-text">Three fictional digits.</div>
+                </div>
+              </div>
+            </fieldset>
+            </div>
+
+            <div class="contract-navigation d-flex flex-column flex-sm-row justify-content-between gap-3 mt-5">
+              <button id="contractPreviousButton" class="btn btn-outline-light px-4" type="button" disabled>
+                Previous
+              </button>
+              <button id="contractNextButton" class="btn btn-success px-4" type="button">Next</button>
+            </div>
+          </form>
         </div>
       </section>
 

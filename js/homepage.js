@@ -14,6 +14,7 @@ if (cat?.stage.canvas?.classList.contains('collaboration-webgl-canvas')) {
     cat.stage.addEffect(new CollaborationEffects(cat.stage));
 }
 const videos = Array.from(document.querySelectorAll('.body-demo-video'));
+const carousel = document.querySelector('.customer-strip');
 const carouselTrack = document.querySelector('.customer-marquee-track');
 const carouselControl = document.querySelector('#carouselControl');
 const carouselControlPath = document.querySelector('#carouselControlPath');
@@ -22,6 +23,7 @@ const workflowVideoControlPath = document.querySelector('#workflowVideoControlPa
 const hero = document.querySelector('#hero');
 const backToTop = document.querySelector('#backToTop');
 let carouselPausedByUser = false;
+let carouselVisible = false;
 let pageActive = true;
 
 function updateWorkflowVideoControl(video) {
@@ -78,6 +80,7 @@ function updateCarouselMotion() {
     if (!carouselTrack) return;
 
     const shouldPause = carouselPausedByUser
+        || !carouselVisible
         || !pageActive
         || reducedMotion.matches;
     carouselTrack.classList.toggle('is-paused', shouldPause);
@@ -116,6 +119,14 @@ const videoObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.15 });
 
 for (const video of videos) videoObserver.observe(video);
+
+if (carousel && carouselTrack) {
+    const carouselObserver = new IntersectionObserver(([entry]) => {
+        carouselVisible = entry.isIntersecting;
+        updateCarouselMotion();
+    });
+    carouselObserver.observe(carousel);
+}
 
 const heroObserver = new IntersectionObserver(([entry]) => {
     const heroIsAboveViewport = !entry.isIntersecting
