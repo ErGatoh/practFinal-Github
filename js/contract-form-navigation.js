@@ -34,6 +34,7 @@ if (form) {
       const outgoing = steps[currentStepIndex];
       const incoming = steps[targetIndex];
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const mobileLayout = window.matchMedia('(max-width: 767.98px)').matches;
 
       if (reducedMotion || typeof outgoing.animate !== 'function') {
         showStep(targetIndex);
@@ -47,8 +48,10 @@ if (form) {
 
       incoming.hidden = false;
       stage.classList.add('is-transitioning');
-      incoming.style.position = 'absolute';
-      incoming.style.inset = '0';
+      if (!mobileLayout) {
+        incoming.style.position = 'absolute';
+        incoming.style.inset = '0';
+      }
 
       const options = { duration: 420, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'both' };
       const outgoingAnimation = outgoing.animate([
@@ -75,6 +78,20 @@ if (form) {
 
     previousButton.addEventListener('click', () => changeStep(-1));
     nextButton.addEventListener('click', () => changeStep(1));
+
+    form.querySelectorAll('.contract-review-step a[href^="#contractStep"]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (isTransitioning || currentStepIndex !== steps.length - 1) return;
+
+        const targetIndex = steps.findIndex((step) => link.hash === `#${step.id}`);
+        if (targetIndex < 0 || targetIndex >= currentStepIndex) return;
+
+        showStep(targetIndex);
+        steps[targetIndex].focus({ preventScroll: true });
+        steps[targetIndex].scrollIntoView({ block: 'start' });
+      });
+    });
 
     showStep(currentStepIndex);
   }

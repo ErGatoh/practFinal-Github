@@ -32,6 +32,7 @@
     <script type="module" src="js/security-shield.js"></script>
     <script type="module" src="js/contract-plan-aura.js"></script>
     <script type="module" src="js/contract-form-navigation.js"></script>
+    <script type="module" src="js/contract-form-review.js"></script>
     <script type="module" src="js/contract-form-nebula.js"></script>
   </head>
   <body class="bg-dark text-light">
@@ -1138,9 +1139,11 @@
 
             <div class="contract-step-stage">
             <fieldset
+              id="contractStep1"
               class="border-0 p-0 m-0"
               data-contract-step="1"
               data-step-label="Choose a plan"
+              tabindex="-1"
             >
               <legend class="contract-plan-legend mb-4">Select one plan</legend>
               <div class="contract-plan-stage position-relative">
@@ -1156,6 +1159,9 @@
                             type="radio"
                             name="copilotPlan"
                             value="pro"
+                            data-summary-name="Copilot Pro"
+                            data-price="10"
+                            data-billing-unit="month"
                           />
                         </span>
                         <span class="contract-plan-audience mb-3">For individual developers</span>
@@ -1177,6 +1183,9 @@
                             type="radio"
                             name="copilotPlan"
                             value="pro-plus"
+                            data-summary-name="Copilot Pro+"
+                            data-price="39"
+                            data-billing-unit="month"
                           />
                         </span>
                         <span class="contract-plan-audience mb-3">For AI power users</span>
@@ -1198,6 +1207,9 @@
                             type="radio"
                             name="copilotPlan"
                             value="max"
+                            data-summary-name="Copilot Max"
+                            data-price="100"
+                            data-billing-unit="month"
                           />
                         </span>
                         <span class="contract-plan-audience mb-3">For high-volume AI users</span>
@@ -1213,9 +1225,11 @@
             </fieldset>
 
             <fieldset
+              id="contractStep2"
               class="contract-addon-step border-0 p-0 m-0"
               data-contract-step="2"
               data-step-label="Choose add-ons"
+              tabindex="-1"
               hidden
             >
               <legend class="contract-plan-legend mb-2">Choose optional add-ons</legend>
@@ -1247,6 +1261,10 @@
                         type="checkbox"
                         name="copilotAddons"
                         value="codespaces-compute"
+                        data-summary-name="Codespaces compute"
+                        data-review-name="Compute"
+                        data-price="0.18"
+                        data-billing-unit="hour"
                       />
                       <svg class="contract-addon-check flex-shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" stroke="currentColor" stroke-width="2"/><path d="m7 12 3.5 3.5L17 9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </span>
@@ -1268,6 +1286,10 @@
                         type="checkbox"
                         name="copilotAddons"
                         value="codespaces-storage"
+                        data-summary-name="Codespaces storage"
+                        data-review-name="Storage"
+                        data-price="0.07"
+                        data-billing-unit="gb-month"
                         aria-describedby="codespacesStorageDependency"
                       />
                       <svg class="contract-addon-check flex-shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" stroke="currentColor" stroke-width="2"/><path d="m7 12 3.5 3.5L17 9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1290,6 +1312,10 @@
                         type="checkbox"
                         name="copilotAddons"
                         value="git-lfs"
+                        data-summary-name="Git Large File Storage"
+                        data-review-name="Git LFS"
+                        data-price="5"
+                        data-billing-unit="month"
                       />
                       <svg class="contract-addon-check flex-shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" stroke="currentColor" stroke-width="2"/><path d="m7 12 3.5 3.5L17 9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </span>
@@ -1305,9 +1331,11 @@
             </fieldset>
 
             <fieldset
+              id="contractStep3"
               class="contract-personal-step border-0 p-0 m-0"
               data-contract-step="3"
               data-step-label="Personal details"
+              tabindex="-1"
               hidden
             >
               <legend class="contract-plan-legend mb-2">Enter your personal details</legend>
@@ -1424,9 +1452,11 @@
             </fieldset>
 
             <fieldset
+              id="contractStep4"
               class="contract-address-step border-0 p-0 m-0"
               data-contract-step="4"
               data-step-label="Address"
+              tabindex="-1"
               hidden
             >
               <legend class="contract-plan-legend mb-2">Enter your address</legend>
@@ -1595,9 +1625,11 @@
             </fieldset>
 
             <fieldset
+              id="contractStep5"
               class="contract-payment-step border-0 p-0 m-0"
               data-contract-step="5"
               data-step-label="Payment"
+              tabindex="-1"
               hidden
             >
               <legend class="contract-plan-legend mb-3">Enter simulated card details</legend>
@@ -1682,9 +1714,162 @@
                 </div>
               </div>
             </fieldset>
+
+            <fieldset
+              class="contract-review-step border-0 p-0 m-0"
+              data-contract-step="6"
+              data-step-label="Review and confirmation"
+              hidden
+            >
+              <legend class="contract-plan-legend mb-2">Review your request</legend>
+              <p class="contract-review-description mb-2">
+                Check each section before confirming your simulated request.
+              </p>
+
+              <div class="row g-2">
+                <div class="col-12 col-md-6">
+                  <section class="contract-review-card card h-100 p-2" aria-labelledby="reviewProductsTitle">
+                    <div class="d-flex justify-content-between align-items-baseline gap-2 mt-1 mb-1">
+                      <h3 id="reviewProductsTitle" class="h6 mb-0">Plan and add-ons</h3>
+                      <p class="contract-review-step-label flex-shrink-0 mb-0">Steps 1 and 2</p>
+                    </div>
+                    <dl class="contract-review-list mb-0">
+                      <div>
+                        <dt>Plan</dt>
+                        <dd id="reviewPlan" class="mb-0">Not selected</dd>
+                      </div>
+                      <div>
+                        <dt>Add-ons</dt>
+                        <dd id="reviewAddons" class="mb-0">No add-ons selected</dd>
+                      </div>
+                    </dl>
+
+                    <div class="contract-review-pricing border-top mt-2 pt-2">
+                      <h4 class="h6 mb-1">Price breakdown</h4>
+                      <div class="row g-1">
+                        <div class="col-6">
+                          <span>Monthly total</span>
+                          <strong id="reviewMonthlyTotal">$0 USD / month</strong>
+                        </div>
+                        <div class="col-6">
+                          <span>Compute usage</span>
+                          <strong id="reviewHourlyRate">None selected</strong>
+                        </div>
+                        <div class="col-6">
+                          <span>Storage usage</span>
+                          <strong id="reviewStorageRate">None selected</strong>
+                        </div>
+                        <div class="col-6">
+                          <span>One-time charges</span>
+                          <strong id="reviewOneTimeTotal">None</strong>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="d-flex flex-wrap justify-content-end gap-2 pt-2 mt-auto">
+                      <a class="btn btn-outline-light btn-sm" href="#contractStep1">Edit plan</a>
+                      <a class="btn btn-outline-light btn-sm" href="#contractStep2">Edit add-ons</a>
+                    </div>
+                  </section>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <section class="contract-review-card card h-100 p-2" aria-labelledby="reviewPersonalTitle">
+                    <div class="d-flex justify-content-between align-items-baseline gap-2 mt-1 mb-1">
+                      <h3 id="reviewPersonalTitle" class="h6 mb-0">Personal details</h3>
+                      <p class="contract-review-step-label flex-shrink-0 mb-0">Step 3</p>
+                    </div>
+                    <dl class="contract-review-list mb-0">
+                      <div>
+                        <dt>Name</dt>
+                        <dd id="reviewPersonalName" class="mb-0">Not provided</dd>
+                      </div>
+                      <div>
+                        <dt>DNI</dt>
+                        <dd id="reviewDni" class="mb-0">Not provided</dd>
+                      </div>
+                      <div>
+                        <dt>Email</dt>
+                        <dd id="reviewEmail" class="mb-0">Not provided</dd>
+                      </div>
+                      <div>
+                        <dt>Phone</dt>
+                        <dd id="reviewPhone" class="mb-0">Not provided</dd>
+                      </div>
+                      <div>
+                        <dt>Date of birth</dt>
+                        <dd id="reviewBirthDate" class="mb-0">Not provided</dd>
+                      </div>
+                    </dl>
+                    <div class="d-flex justify-content-end pt-2 mt-auto">
+                      <a class="btn btn-outline-light btn-sm" href="#contractStep3">Edit personal details</a>
+                    </div>
+                  </section>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <section class="contract-review-card card h-100 p-2" aria-labelledby="reviewAddressTitle">
+                    <div class="d-flex justify-content-between align-items-baseline gap-2 mt-1 mb-1">
+                      <h3 id="reviewAddressTitle" class="h6 mb-0">Address</h3>
+                      <p class="contract-review-step-label flex-shrink-0 mb-0">Step 4</p>
+                    </div>
+                    <dl class="contract-review-list mb-0">
+                      <div>
+                        <dt>Street address</dt>
+                        <dd id="reviewStreetAddress" class="mb-0">Not provided</dd>
+                      </div>
+                      <div>
+                        <dt>City or town</dt>
+                        <dd id="reviewCity" class="mb-0">Not provided</dd>
+                      </div>
+                      <div>
+                        <dt>Province</dt>
+                        <dd id="reviewProvince" class="mb-0">Not provided</dd>
+                      </div>
+                      <div>
+                        <dt>Country</dt>
+                        <dd class="mb-0">Spain</dd>
+                      </div>
+                    </dl>
+                    <div class="d-flex justify-content-end pt-2 mt-auto">
+                      <a class="btn btn-outline-light btn-sm" href="#contractStep4">Edit address</a>
+                    </div>
+                  </section>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <section class="contract-review-card card h-100 p-2" aria-labelledby="reviewPaymentTitle">
+                    <div class="d-flex justify-content-between align-items-baseline gap-2 mt-1 mb-1">
+                      <h3 id="reviewPaymentTitle" class="h6 mb-0">Payment method</h3>
+                      <p class="contract-review-step-label flex-shrink-0 mb-0">Step 5</p>
+                    </div>
+                    <dl class="contract-review-list mb-0">
+                      <div>
+                        <dt>Method</dt>
+                        <dd class="mb-0">Simulated card</dd>
+                      </div>
+                      <div>
+                        <dt>Cardholder</dt>
+                        <dd id="reviewCardholder" class="mb-0">Not provided</dd>
+                      </div>
+                      <div>
+                        <dt>Card number</dt>
+                        <dd id="reviewCardNumber" class="mb-0">Not provided</dd>
+                      </div>
+                      <div>
+                        <dt>Expiry date</dt>
+                        <dd id="reviewCardExpiry" class="mb-0">Not provided</dd>
+                      </div>
+                    </dl>
+                    <div class="d-flex justify-content-end pt-2 mt-auto">
+                      <a class="btn btn-outline-light btn-sm" href="#contractStep5">Edit payment</a>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </fieldset>
             </div>
 
-            <div class="contract-navigation d-flex flex-column flex-sm-row justify-content-between gap-3 mt-5">
+            <div class="contract-navigation d-flex flex-column flex-sm-row justify-content-between gap-3">
               <button id="contractPreviousButton" class="btn btn-outline-light px-4" type="button" disabled>
                 Previous
               </button>

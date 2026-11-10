@@ -1,6 +1,6 @@
 # Scrum project · GitHub Copilot contract form
 
-Last updated: 2026-11-04.
+Last updated: 2026-11-10.
 
 ## Purpose
 
@@ -21,14 +21,15 @@ Later approved corrections in this document supersede conflicting statements in 
 
 ## Current handoff
 
-- Branch: `feature/formulario`, tracking `origin/feature/formulario`.
+- Branch: `feature/validacion`.
 - The working tree contains uncommitted form work in `AGENTS.md`, `css/style.css`, `index.html`, `js/contract-form-navigation.js`, `js/contract-form-nebula.js`, `js/contract-plan-aura.js`, and `scrum_project.md`.
 - `js/homepage.js` also has a local modification outside the latest form corrections. Do not revert, overwrite, or include it in form work without reading it and receiving explicit approval.
-- Implemented form steps: 1 plan, 2 optional add-ons, 3 personal details, 4 Spanish address, and 5 fictional card details.
-- Implemented navigation: Previous and Next traverse steps 1-5, preserve native control values, update progress, stop at the available boundaries, animate in opposite directions, and respect reduced motion.
-- The step stage reserves the tallest responsive step height so Previous and Next remain in the same form position. Hidden fieldsets remain invisible and non-interactive.
+- Implemented form steps: 1 plan, 2 optional add-ons, 3 personal details, 4 Spanish address, 5 fictional card details, and the static responsive structure for step 6 review and confirmation.
+- Implemented navigation: Previous and Next traverse steps 1-6, preserve native control values, update progress, stop at the available boundaries, animate in opposite directions, and respect reduced motion.
+- At every width, the step stage reserves the natural height of the lowest-reaching responsive fieldset, including hidden steps, so Previous and Next remain static. Hidden fieldsets remain invisible and non-interactive, and navigation sits 20 px below the shared lower boundary.
 - Implemented decoration: shared plan aura and a subtle form-wide nebula canvas. The nebula has no confirmed Jira task and must not be attributed by assumption.
-- Not implemented: step 6, totals, legal consent controls, custom validation, KO/OK routes, submission behavior, backend, payment, final scroll, or the fixed success notice.
+- Implemented step 6 behavior: the review reflects the selected plan, add-ons, personal details, Spanish address, and simulated card details without duplicating form state. Monthly charges are totaled together while hourly and GB-month rates remain separate. Its four cards use a paint-only GitHub and Copilot finish without changing their layout. Five edit links open steps 1-5 directly; Next returns to the review without resetting controls.
+- Not implemented: legal consent controls, bank debit, custom validation, KO/OK routes, submission behavior, backend, payment, final scroll, or the fixed success notice.
 - Approved future completion: step 6 will review the request, total, and legal consent controls. After a successful simulated confirmation, return to the absolute top and show a closable Bootstrap notice fixed to the viewport for approximately ten seconds, once, with `Pago realizado` and `No se realizará ningún cargo a la cuenta.`
 - Pending verification: real-browser visual checks on mobile, tablet, and desktop; keyboard-only checks; homepage regression checks; and the twelve PDF test cases when their corresponding phases exist.
 
@@ -39,6 +40,30 @@ Later approved corrections in this document supersede conflicting statements in 
 - Simulated animated navigation: advance, reverse movement, boundaries, one visible step, and retained values passed (`animated navigation and state: OK`).
 - Simulated reduced-motion navigation and retained values passed (`reduced motion and state: OK`).
 - Stable navigation test confirmed no temporary JavaScript stage height, retained values, one visible step, and the step-5 boundary (`stable navigation and state: OK`).
+- SCRUM-17 simulated mobile and tablet navigation confirmed dynamic layout positioning and final step visibility (`mobile dynamic navigation: OK`; `tablet dynamic navigation: OK`).
+- SCRUM-17 simulated desktop navigation from 1200 px confirmed stable positioning and transition cleanup (`desktop stable navigation: OK`).
+- SCRUM-21 Chrome checks at 375, 768, 1200, and 1440 px confirmed one visible step, the responsive review layout, correct step 6 progress, and no document-level horizontal overflow.
+- SCRUM-21 animated navigation from step 5 to step 6 and reduced-motion traversal through all six steps passed without JavaScript exceptions; Next is disabled at the step 6 boundary.
+- `node --check js/contract-form-review.js`: passed.
+- SCRUM-22 Chrome checks at 375, 768, 1200, and 1440 px confirmed live review updates, retained values, readable wrapping, and no document-level horizontal overflow.
+- SCRUM-22 pricing evidence with Copilot Pro+ and all add-ons produced `$44 USD / month`, `$0.18 USD / hour`, and `$0.07 USD / GB-month` as separate units; the card summary exposed only `3456` and did not render the test CVV.
+- SCRUM-22 event evidence confirmed selecting Copilot Pro updates the untouched monthly total from `$0 USD / month` to `$10 USD / month` without navigation or reload.
+- SCRUM-22 compact-review correction reduced the populated step height from 2227 to 1471 px at 375 px, from 1623 to 818 px at 768 px, from 922 to 722 px at 1200 px, and from 898 to 722 px at 1440 px.
+- The compact-review Chrome check confirmed two cards per row from 768 px, no document-level horizontal overflow, no JavaScript exceptions, retained summary data, separate billing units, masked card output, and no rendered CVV.
+- A two-block compact-review experiment reached 556 px at 375 px, 312 px at 768 px, and 274 px from 1200 px, but was explicitly rejected because it removed the four approved review cards and moved navigation.
+- The approved restoration returned the four compact cards and their exact prior navigation positions: a 48 px gap at every tested width, 1471 px at 375 px, 818 px at 768 px, and a stable 722 px stage from 1200 px. Chrome confirmed no horizontal overflow, CVV exposure, or JavaScript exceptions.
+- The latest SCRUM-22 correction made both cards in each row equal-height with Bootstrap `h-100`, reduced card padding, gutters, headings, typography, row spacing, and pricing spacing, and reserved the approved responsive step heights so navigation remained at exactly 1471, 818, and 722 px with its original 48 px gap.
+- Chrome at 375, 768, 1200, and 1440 px confirmed the denser four-card layout, equal paired heights from 768 px, unchanged navigation positions, retained data and totals, no horizontal overflow, no CVV exposure, and no JavaScript exceptions.
+- The latest static-navigation correction removed step-6 height reservations and let all visible or hidden fieldsets define one natural grid boundary. All six steps measured the same 1153 px stage at 375 px, 1081 px at 768 px, and 534 px at 1200 and 1440 px, with navigation exactly 20 px below it.
+- The static-navigation Chrome traversal confirmed identical button coordinates through steps 1-6, retained directional and reduced-motion behavior, one accessible visible step, no document-level horizontal overflow, and no JavaScript exceptions.
+- The SCRUM-18 partial visual review and SCRUM-22 card correction added only static CSS gradients, a short-radius shadow, softer dividers, and a two-pixel Copilot accent. No image, filter, animation, event handler, script, or network request was added.
+- Post-correction Chrome checks at 375, 768, 1200, and 1440 px preserved the exact 1153, 1081, 534, and 534 px stage heights and the 20 px navigation gap. Captures confirmed the four-card GitHub finish; document overflow remained zero and no JavaScript exceptions occurred.
+- The approved SCRUM-18 and SCRUM-22 header refinement placed each purple step label to the right of its title with Bootstrap flex utilities, added a 4 px top margin, and increased card copy from 14 to 15 px and step labels from 12 to 13 px.
+- The approved addon-summary refinement renders abbreviated names (`Compute`, `Storage`, and `Git LFS`) as a wrapping flex row separated by `|`; the all-addons check retained separate billing units and masked the CVV.
+- The approved mobile navigation correction uses the mobile breakpoint for dynamic hidden-step handling and keeps tablet/desktop fixed transition positioning; final Chrome checks at 375, 768, 1200, and 1440 px preserved the 20 px navigation gap, no document overflow, and no JavaScript exceptions.
+- Chrome captures at 375, 768, 1200, and 1440 px confirmed aligned single-line headers and readable larger copy. Stage heights remained exactly 1153, 1081, 534, and 534 px, navigation retained its 20 px gap, document overflow remained zero, and no JavaScript exceptions occurred.
+- SCRUM-23: the five Bootstrap edit links open their matching steps, focus and scroll to the fieldset, retain every control value, and allow a return to review with Next. Chrome checks at 320, 375, 768, and 1200 px passed for all five links, including Enter-key activation, with no card or page overflow, a 20 px navigation gap, and no JavaScript exceptions.
+- SCRUM-23: editing the first name on step 3 changed the live review from `Ana Garcia` to `Marta Garcia`; animated Next navigation returned through steps 4 and 5 to review without changing the email. No new CSS or review-module logic was required.
 - `git diff --check`: passed without whitespace errors; only expected LF-to-CRLF working-copy warnings were reported.
 - Code-level checks do not replace the pending browser, responsive, visual, accessibility, and homepage regression checks.
 
@@ -54,9 +79,48 @@ Later approved corrections in this document supersede conflicting statements in 
 | SCRUM-14 | Create the personal-data template with all required labeled fields and appropriate input types. | Implementation and label-spacing correction complete; browser verification pending. | Inspect labels and attributes, verify the 5 px label offset, responsive layout, and keyboard order. |
 | SCRUM-15 | Specify and create the Spanish-address step required by the practice. | Implementation complete; verification pending. | Reveal step 4, inspect Spanish address fields and province codes, then record evidence in Jira. |
 | SCRUM-16 | Add fictional card fields without connecting or performing a real payment. | Static fields implemented; premature success notice removed; browser verification pending. | Inspect card templates and fictional-data guidance; confirm no success notice, payment, storage, or network request occurs in step 5. |
-| SCRUM-19 | Implement JavaScript navigation between the existing form steps while preserving entered values. | Navigation, directional animation, reduced motion, and stable button position implemented; browser verification pending. | Traverse steps 1-5 in both directions and verify progress, controls, values, animation, reduced motion, and stable navigation position. |
+| SCRUM-17 | Adapt the form layout for mobile, tablet, and desktop devices. | Shared natural step boundary and static navigation implemented and verified in Chrome. | Preserve the tallest responsive fieldset boundary, 20 px navigation gap, animations, retained values, and no horizontal overflow. |
+| SCRUM-18 | Review and correct the final visual result across devices. | Step 6 visual review completed and verified; the complete form review remains pending. | Inspect steps 1-5 in a real browser; step 6 evidence exists at 375, 768, 1200, and 1440 px with unchanged geometry and no document overflow. |
+| SCRUM-19 | Implement JavaScript navigation between the existing form steps while preserving entered values. | Navigation, directional animation, reduced motion, and static button position implemented and verified in Chrome. | Traverse steps 1-6 in both directions and preserve progress, controls, values, animation, reduced motion, and the shared lower boundary. |
+| SCRUM-21 | Create the responsive structure for step 6 review and confirmation. | Static structure implemented; browser verification pending. | Traverse steps 1-6 and verify responsive review sections, progress, animation, reduced motion, retained values, keyboard use, and no horizontal overflow. |
+| SCRUM-22 | Show the request summary and coherent price breakdown in step 6. | Dynamic summary, unit-separated pricing, compact layout, and GitHub visual finish implemented and verified in Chrome. | Preserve evidence for live updates, masking, separate usage rates, responsive heights, retained state, performance-safe paint, and no horizontal overflow. |
+| SCRUM-23 | Edit links from review to steps 1-5. | Implemented and verified locally; Jira status not confirmed here. | Five destinations, native values, keyboard activation, focus, animated return, and responsive layout verified in Chrome. |
 
 Other Jira tasks will be recorded here when their actual titles and scopes are provided.
+
+## SCRUM-21 approved implementation boundary
+
+- `index.html`: add a hidden sixth fieldset after payment with the ordered step metadata, review heading, and four responsive Bootstrap sections prepared for products, personal details, address, and payment.
+- `css/style.css`: add only form-scoped colors for the review cards, labels, and placeholder copy that Bootstrap does not provide in the approved GitHub palette.
+- The existing navigation discovers the sixth fieldset automatically, so step 6 receives the same directional animation and reduced-motion behavior without changes to `js/contract-form-navigation.js`.
+- Dynamic summaries, totals, edit links, legal consent controls, confirmation, validation, and KO/OK behavior remain outside SCRUM-21.
+
+## Evidence to collect for SCRUM-21
+
+- Navigate from step 1 through step 6 and back, confirming one visible fieldset and the correct progress label at each boundary.
+- Verify step 6 uses one card per row on mobile and two cards per row from the large Bootstrap breakpoint, without horizontal scrolling.
+- Confirm directional animation, reduced motion, retained values, and keyboard navigation continue to work with the new step.
+- Confirm no existing homepage content, navigation, decorative canvas, validation, total, or submission behavior changed.
+
+## SCRUM-22 approved implementation boundary
+
+- `index.html`: add explicit summary name, price, and billing-unit metadata to the existing product controls; replace step 6 placeholders with review outputs and an itemized pricing block; load a dedicated review module.
+- `js/contract-form-review.js`: derive the review exclusively from the existing native controls, update it on `input` and `change`, mask the card number, omit CVV, total monthly concepts together, and keep hourly and GB-month usage rates separate.
+- `css/style.css`: use Bootstrap for the responsive cards, grid, and spacing; add only scoped definition-list, divider, wrapping, and price-output styles required by the GitHub palette and compact mobile layout.
+- Approved compactness correction: use smaller Bootstrap spacing, show two cards per row from 768 px, keep each definition row in two columns, and avoid repeating product prices above the dedicated price breakdown.
+- Rejected correction: the temporary two-block layout and 24 px navigation gap were removed after visual review.
+- Current approved correction: retain four separate compact cards, two per row from 768 px, use equal heights within each row, reduce their internal spacing and type scale, and place navigation 20 px below the natural lower boundary defined by the lowest-reaching visible or hidden fieldset at each width.
+- Approved visual correction: use only static, form-scoped paint properties for the GitHub and Copilot finish. Preserve the box model and avoid images, filters, animations, JavaScript, or network work.
+- Approved header refinement: use Bootstrap flex utilities to align titles left and purple step labels right on one baseline, add a reduced top margin, and spend the released vertical line on a one-pixel type increase.
+- Edit links, legal consent controls, bank debit, validation, error presentation, confirmation, submission, and KO/OK behavior remain outside SCRUM-22.
+
+## Evidence to collect for SCRUM-22
+
+- Verify the untouched form displays `Not selected`, `No add-ons selected`, and `Not provided` without JavaScript errors.
+- Enter representative values in steps 1-5 and confirm every review section updates without navigation, reload, or duplicated state.
+- Select monthly and usage-based products and confirm only monthly concepts are added; hourly and GB-month rates remain separately labeled and one-time charges report none.
+- Confirm the card summary exposes only its last four digits and never renders the CVV.
+- Traverse all six steps at mobile, tablet, and desktop sizes and confirm values persist, the review remains readable, and no horizontal scroll appears.
 
 ## SCRUM-10 original implementation boundary (historical)
 
@@ -167,6 +231,16 @@ Text controls were chosen instead of number controls to preserve leading zeroes 
 - Verify the number template accepts either 16 contiguous digits or four groups of four digits, expiry uses `MM/AA`, and CVV contains three digits.
 - Verify responsive layout and keyboard order, and confirm no payment request, storage, or network request occurs.
 
+## SCRUM-18 approved scope
+
+- Objective: deliver a clean, consistent, GitHub-aligned form with no uncontrolled overflow, spacing, alignment, or visual errors.
+- Acceptance: steps 1-5 remain readable and responsive on mobile, tablet, and desktop; no text is clipped, controls overlap, or unintended horizontal scrolling appears.
+- EARS prompt: while the viewport changes, the form shall preserve readable spacing, alignment, and GitHub visual continuity. If an uncontrolled overflow or visual error appears, the system shall correct it without changing existing behavior.
+- Decisions: use Bootstrap first and add scoped CSS only where Bootstrap cannot resolve the visual issue.
+- Tests: traverse steps 1-5 in real-browser mobile, tablet, and desktop viewports, checking margins, text, controls, animations, and overflow.
+- Exclusions: no new form steps, validation rules, totals, submission behavior, or other PDF functionality.
+- AI use: OpenCode with `gpt-5.6-sol` for visual review support and correction proposals.
+
 ## SCRUM-19 original implementation boundary (historical)
 
 - `index.html`: identify each existing fieldset with an ordered `data-contract-step` and label, identify the progress text and navigation buttons, and load a dedicated form-navigation module.
@@ -202,3 +276,4 @@ Navigation uses ordered `data-*` attributes instead of hard-coded field selector
 - Future approved behavior, not implemented now: step 6 reviews the request and legal consents; only after a successful final confirmation will the page return to its absolute top and display a closable Bootstrap notice fixed to the viewport for approximately ten seconds, once. The approved notice text is `Pago realizado` with `No se realizará ningún cargo a la cuenta.` No step 6, validation, or confirmation logic is included in this correction.
 - SCRUM-13 correction: increase the optional add-on cards' responsive minimum height so their vertical presence matches the intended selection-card treatment without enlarging the checkbox indicator. Evidence: `css/style.css` `.contract-addon-card`.
 - SCRUM-19 correction: all steps share the tallest responsive stage height, keeping Previous and Next in the same form position while hidden steps remain invisible and non-interactive. The animation no longer writes a temporary inline stage height. Evidence: `css/style.css` `.contract-step-stage` and `js/contract-form-navigation.js`.
+- SCRUM-17 correction: below 1200 px, hidden steps no longer contribute to the stage height, so navigation follows the visible step without persistent empty space. During mobile and tablet animations, both steps remain in the shared grid temporarily to prevent clipping. Desktop retains the tallest-step height. Evidence: `css/style.css` responsive hidden-step rule and `js/contract-form-navigation.js` dynamic layout branch.

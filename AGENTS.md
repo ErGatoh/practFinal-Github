@@ -26,6 +26,8 @@ El agente no modificará el navbar por iniciativa propia ni como parte de cambio
 
 Después de cada modificación de código que pertenezca al desarrollo gestionado con Scrum, el agente identificará qué tarea o tareas de Jira afectan los archivos y comportamientos modificados. Al informar del resultado, indicará para cada tarea la corrección relevante realizada, la prueba efectuada y su resultado, y la evidencia disponible. Si el cambio no pertenece a una tarea existente, lo señalará sin atribuirlo a una tarea por suposición.
 
+Cuando el usuario pida «dame la descripción del Scrum», el agente responderá con una plantilla breve: título, descripción, objetivo, criterios de aceptación, prompt EARS, decisiones, pruebas, exclusiones y uso de IA. Cada apartado tendrá solo la información esencial, con redacción natural, clara y fácil de leer rápidamente. Evitará textos extensos, rígidos, repetitivos o excesivamente técnicos.
+
 ## Parte 1 · Portada de GitHub
 
 La primera parte es la réplica existente de la portada pública de GitHub. Se conservarán su estructura, identidad visual, recursos e interacciones actuales. Las tareas de la segunda parte no alterarán los módulos de la portada ni el JavaScript de sus modelos 3D salvo petición y aprobación expresas. La integración del nuevo formulario con la home se limitará al alcance que apruebe el usuario.
