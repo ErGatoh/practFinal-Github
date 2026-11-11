@@ -2490,7 +2490,7 @@ body {
   pointer-events: none;
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 1199.98px) {
   .contract-form-section .contract-step-stage > fieldset[hidden] {
     display: none !important;
   }
@@ -2818,6 +2818,27 @@ body {
   font-weight: 600;
 }
 
+@media (min-width: 992px) {
+  .contract-form-section .contract-review-consents {
+    transform: translateY(0.4375rem);
+  }
+}
+
+.contract-form-section .contract-review-step .form-check-input {
+  background-color: #0d1117;
+  border-color: #a4aea6;
+}
+
+.contract-form-section .contract-review-step .form-check-input:checked {
+  background-color: #a371f7;
+  border-color: #a371f7;
+}
+
+.contract-form-section .contract-review-step .form-check-input:focus {
+  border-color: #a371f7;
+  box-shadow: 0 0 0 0.25rem rgba(163, 113, 247, 0.2);
+}
+
 .contract-form-section .contract-review-list > div {
   display: grid;
   grid-template-columns: minmax(5rem, 0.35fr) minmax(0, 1fr);
@@ -2900,6 +2921,21 @@ body {
   opacity: 1;
 }
 
+.contract-form-section .contract-payment-step .form-check-input {
+  background-color: #0d1117;
+  border-color: #a4aea6;
+}
+
+.contract-form-section .contract-payment-step .form-check-input:checked {
+  background-color: #a371f7;
+  border-color: #a371f7;
+}
+
+.contract-form-section .contract-payment-step .form-check-input:focus {
+  border-color: #a371f7;
+  box-shadow: 0 0 0 0.25rem rgba(163, 113, 247, 0.2);
+}
+
 .contract-form-section .contract-required {
   color: #f85149;
 }
@@ -2929,4 +2965,47 @@ body {
   color: #f85149;
   background: #2a1215;
   border-color: #8e1519;
+}
+
+.contract-form-section .contract-error[hidden] {
+  display: none;
+}
+
+.contract-form-section .invalid-feedback {
+  color: #f85149;
+}
+
+.contract-form-section .form-control.is-invalid,
+.contract-form-section .form-select.is-invalid,
+.contract-form-section .form-check-input.is-invalid {
+  border-color: #f85149;
+}
+
+.contract-form-section .contract-plan-frame:has(input.is-invalid) .contract-plan-card,
+.contract-form-section .contract-addon-card:has(input.is-invalid) {
+  border-color: #f85149;
+}
+
+.contract-form-section .contract-selection-error {
+  display: block;
+  color: #f85149;
+  background-color: #2a1215;
+  border: 1px solid #8e1519;
+}
+
+.contract-success-modal {
+  color: #f0f6fc;
+  font-family: "Mona Sans", system-ui, -apple-system, sans-serif;
+  background: linear-gradient(180deg, rgba(163, 113, 247, 0.09), transparent 45%), #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 1rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px rgba(240, 246, 252, 0.08);
+}
+
+.contract-success-title {
+  color: #3fb950;
+}
+
+.contract-success-detail {
+  color: #a4aea6;
 }

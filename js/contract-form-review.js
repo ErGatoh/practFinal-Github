@@ -1,3 +1,5 @@
+import { calculateContractTotals } from './contract-form-validation.js';
+
 const form = document.forms.namedItem('copilotContract');
 
 if (form) {
@@ -16,8 +18,12 @@ if (form) {
     streetAddress: form.querySelector('#reviewStreetAddress'),
     city: form.querySelector('#reviewCity'),
     province: form.querySelector('#reviewProvince'),
-    cardholder: form.querySelector('#reviewCardholder'),
-    cardNumber: form.querySelector('#reviewCardNumber'),
+    paymentMethod: form.querySelector('#reviewPaymentMethod'),
+    paymentHolderLabel: form.querySelector('#reviewPaymentHolderLabel'),
+    paymentHolder: form.querySelector('#reviewPaymentHolder'),
+    paymentIdentifierLabel: form.querySelector('#reviewPaymentIdentifierLabel'),
+    paymentIdentifier: form.querySelector('#reviewPaymentIdentifier'),
+    paymentExpiryRow: form.querySelector('#reviewPaymentExpiryRow'),
     cardExpiry: form.querySelector('#reviewCardExpiry'),
   };
 
@@ -29,24 +35,15 @@ if (form) {
   const updateProducts = () => {
     const selectedPlan = form.querySelector('input[name="copilotPlan"]:checked');
     const selectedAddons = Array.from(form.querySelectorAll('input[name="copilotAddons"]:checked'));
-    let monthlyTotal = 0;
-    let hourlyRate = 0;
-    let storageRate = 0;
+    const totals = calculateContractTotals(form);
 
     if (selectedPlan) {
-      const price = Number(selectedPlan.dataset.price);
       outputs.plan.textContent = selectedPlan.dataset.summaryName;
-      monthlyTotal += price;
     } else {
       outputs.plan.textContent = 'Not selected';
     }
 
     const addonNames = selectedAddons.map((addon) => {
-      const price = Number(addon.dataset.price);
-      const unit = addon.dataset.billingUnit;
-      if (unit === 'month') monthlyTotal += price;
-      if (unit === 'hour') hourlyRate += price;
-      if (unit === 'gb-month') storageRate += price;
       return addon.dataset.reviewName;
     });
 
@@ -61,9 +58,9 @@ if (form) {
       outputs.addons.textContent = 'No add-ons selected';
     }
 
-    outputs.monthlyTotal.textContent = `${formatPrice(monthlyTotal)} / month`;
-    outputs.hourlyRate.textContent = hourlyRate ? `${formatPrice(hourlyRate)} / hour` : 'None selected';
-    outputs.storageRate.textContent = storageRate ? `${formatPrice(storageRate)} / GB-month` : 'None selected';
+    outputs.monthlyTotal.textContent = totals ? `${formatPrice(totals.month)} / month` : 'Check prices';
+    outputs.hourlyRate.textContent = totals?.hour ? `${formatPrice(totals.hour)} / hour` : 'None selected';
+    outputs.storageRate.textContent = totals?.['gb-month'] ? `${formatPrice(totals['gb-month'])} / GB-month` : 'None selected';
     outputs.oneTimeTotal.textContent = 'None';
   };
 
@@ -91,9 +88,21 @@ if (form) {
   };
 
   const updatePayment = () => {
+    const bankSelected = form.querySelector('input[name="paymentMethod"]:checked')?.value === 'bank';
+    outputs.paymentMethod.textContent = bankSelected ? 'Simulated bank debit' : 'Simulated card';
+    outputs.paymentHolderLabel.textContent = bankSelected ? 'Account holder' : 'Cardholder';
+    outputs.paymentIdentifierLabel.textContent = bankSelected ? 'IBAN' : 'Card number';
+    outputs.paymentExpiryRow.classList.toggle('d-none', bankSelected);
+
+    if (bankSelected) {
+      outputs.paymentHolder.textContent = displayValue(textValue(form.elements.bankAccountHolder));
+      outputs.paymentIdentifier.textContent = displayValue(textValue(form.elements.bankIban));
+      return;
+    }
+
     const cardDigits = textValue(form.elements.cardNumber).replace(/\D/g, '');
-    outputs.cardholder.textContent = displayValue(textValue(form.elements.cardholderName));
-    outputs.cardNumber.textContent = cardDigits ? `Card ending in ${cardDigits.slice(-4)}` : 'Not provided';
+    outputs.paymentHolder.textContent = displayValue(textValue(form.elements.cardholderName));
+    outputs.paymentIdentifier.textContent = cardDigits ? `Card ending in ${cardDigits.slice(-4)}` : 'Not provided';
     outputs.cardExpiry.textContent = displayValue(textValue(form.elements.cardExpiry));
   };
 

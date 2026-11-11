@@ -16,6 +16,12 @@ Al recibir cada petición, el agente volverá a leer los archivos relevantes del
 
 Antes de planificar o modificar cualquier parte del formulario de contratación, el agente leerá `scrum_project.md`, «Practica 2 Formulario de contratacion.pdf» y los archivos relevantes en su estado actual. Utilizará `scrum_project.md` como registro de decisiones, alcance, correcciones, pruebas y trabajo pendiente, sin asumir que sustituye el estado real de Jira ni el contenido actual del código.
 
+El agente hará las lecturas obligatorias y limitará las demás consultas a los fragmentos necesarios. Agrupará operaciones independientes y evitará búsquedas, pruebas y explicaciones redundantes. La verificación será proporcional al cambio y respetará las instrucciones expresas del usuario.
+
+En `scrum_project.md` mantendrá una bitácora breve: una sola entrada por tarea, que actualizará si hay correcciones posteriores. Recogerá únicamente el cambio, la prueba y el resultado relevantes, sin duplicar descripciones de Jira ni acumular historiales repetidos.
+
+Los planes previos y las respuestas serán breves y concretos, sin repetir información ya establecida, pero conservarán los archivos, límites y aprobaciones que exigen estas instrucciones.
+
 Para desarrollar la interfaz, el agente utilizará Bootstrap siempre que sea posible. Antes de emplear CSS personalizado, JavaScript u otra tecnología para una necesidad concreta, comprobará y descartará las soluciones viables ofrecidas por Bootstrap. Solo utilizará una alternativa cuando el código la necesite y Bootstrap no permita resolverla adecuadamente. Esta excepción deberá aparecer y justificarse en el resumen previo que se someterá a la aprobación del usuario.
 
 El agente seguirá fielmente las instrucciones del usuario y respetará el significado literal y el alcance expresado en cada petición. No reinterpretará una orden de forma que produzca un resultado contrario, diferente o más amplio que el solicitado. No sustituirá las decisiones del usuario por sus propias preferencias ni añadirá supuestos, mejoras o cambios no pedidos.

@@ -32,6 +32,7 @@
     <script type="module" src="js/security-shield.js"></script>
     <script type="module" src="js/contract-plan-aura.js"></script>
     <script type="module" src="js/contract-form-navigation.js"></script>
+    <script type="module" src="js/contract-form-payment.js"></script>
     <script type="module" src="js/contract-form-review.js"></script>
     <script type="module" src="js/contract-form-nebula.js"></script>
   </head>
@@ -1132,6 +1133,7 @@
             name="copilotContract"
             novalidate
           >
+            <div id="contractErrorSummary" class="contract-error alert alert-danger mb-4" role="alert" tabindex="-1" hidden></div>
             <div class="contract-progress mb-4" aria-label="Form progress" aria-live="polite">
               <span id="contractCurrentStep" class="fw-semibold">Step 1 of 6</span>
               <span id="contractCurrentStepLabel">Choose a plan</span>
@@ -1247,7 +1249,7 @@
                   <path d="M12 9v5" />
                   <path d="M12 18h.01" />
                 </svg>
-                <span>Codespaces storage requires the 2-core Codespaces environment in this simulation.
+                <span>Codespaces storage requires the 2-core Codespaces environment.
                 Prices use different billing units and will be itemized separately.</span>
               </div>
 
@@ -1632,13 +1634,32 @@
               tabindex="-1"
               hidden
             >
-              <legend class="contract-plan-legend mb-3">Enter simulated card details</legend>
+              <legend class="contract-plan-legend mb-3">Choose a payment method</legend>
 
               <p class="contract-payment-description mb-4">
-                Use fictional card details only. This form is not connected to a payment service.
+                This form is not connected to a payment service.
               </p>
 
-              <div class="row g-4">
+              <fieldset class="border-0 p-0 m-0 mb-4">
+                <legend class="form-label fw-semibold mb-2">Payment method</legend>
+                <div class="row g-3">
+                  <div class="col-12 col-sm-6">
+                    <div class="form-check">
+                      <input id="paymentCardMethod" class="form-check-input" type="radio" name="paymentMethod" value="card" checked />
+                      <label class="form-check-label" for="paymentCardMethod">Simulated card</label>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <div class="form-check">
+                      <input id="paymentBankMethod" class="form-check-input" type="radio" name="paymentMethod" value="bank" />
+                      <label class="form-check-label" for="paymentBankMethod">Simulated bank debit</label>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div id="contractCardFields">
+                <div class="row g-4">
                 <div class="col-12">
                   <label class="form-label" for="cardholderName">
                     Cardholder name <span class="contract-required" aria-hidden="true">*</span>
@@ -1670,7 +1691,7 @@
                     aria-describedby="cardNumberHelp"
                     required
                   />
-                  <div id="cardNumberHelp" class="contract-field-help form-text">Sixteen fictional digits, with or without spaces.</div>
+                  <div id="cardNumberHelp" class="contract-field-help form-text">Sixteen digits, with or without spaces.</div>
                 </div>
 
                 <div class="col-12 col-sm-6">
@@ -1710,7 +1731,42 @@
                     aria-describedby="cardCvvHelp"
                     required
                   />
-                  <div id="cardCvvHelp" class="contract-field-help form-text">Three fictional digits.</div>
+                  <div id="cardCvvHelp" class="contract-field-help form-text">Three digits.</div>
+                </div>
+                </div>
+              </div>
+
+              <div id="contractBankFields" hidden>
+                <div class="row g-4">
+                  <div class="col-12">
+                    <label class="form-label" for="bankAccountHolder">
+                      Account holder <span class="contract-required" aria-hidden="true">*</span>
+                    </label>
+                    <input
+                      id="bankAccountHolder"
+                      class="form-control"
+                      type="text"
+                      name="bankAccountHolder"
+                      autocomplete="off"
+                      required
+                      disabled
+                    />
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="bankIban">
+                      Spanish IBAN <span class="contract-required" aria-hidden="true">*</span>
+                    </label>
+                    <input
+                      id="bankIban"
+                      class="form-control"
+                      type="text"
+                      name="bankIban"
+                      placeholder="ES00 0000 0000 0000 0000 0000"
+                      autocomplete="off"
+                      required
+                      disabled
+                    />
+                  </div>
                 </div>
               </div>
             </fieldset>
@@ -1721,7 +1777,47 @@
               data-step-label="Review and confirmation"
               hidden
             >
-              <legend class="contract-plan-legend mb-2">Review your request</legend>
+              <legend class="visually-hidden">Review your request</legend>
+              <div class="d-flex flex-column flex-lg-row align-items-lg-start gap-2 mb-2">
+                <p class="contract-plan-legend flex-shrink-0 mb-0">Review your request</p>
+                <div class="contract-review-consents d-flex flex-wrap align-items-start justify-content-lg-end gap-2 column-gap-lg-3 row-gap-lg-2 ms-lg-auto">
+                  <div class="form-check mb-0">
+                    <input
+                      id="contractTermsConsent"
+                      class="form-check-input"
+                      type="checkbox"
+                      name="contractTermsConsent"
+                      value="accepted"
+                      required
+                    />
+                    <label class="form-check-label" for="contractTermsConsent">Accept contract terms</label>
+                    <a class="link-light ms-1" href="#contractTermsModal" data-bs-toggle="modal" data-bs-target="#contractTermsModal">Read terms</a>
+                  </div>
+                  <div class="form-check mb-0">
+                    <input
+                      id="contractPrivacyConsent"
+                      class="form-check-input"
+                      type="checkbox"
+                      name="contractPrivacyConsent"
+                      value="accepted"
+                      required
+                    />
+                    <label class="form-check-label" for="contractPrivacyConsent">Accept privacy policy</label>
+                    <a class="link-light ms-1" href="#contractPrivacyModal" data-bs-toggle="modal" data-bs-target="#contractPrivacyModal">Read privacy</a>
+                  </div>
+                  <div class="form-check mb-0">
+                    <input
+                      id="contractMarketingConsent"
+                      class="form-check-input"
+                      type="checkbox"
+                      name="contractMarketingConsent"
+                      value="yes"
+                    />
+                    <label class="form-check-label" for="contractMarketingConsent">Marketing messages (optional)</label>
+                    <a class="link-light ms-1" href="#contractMarketingModal" data-bs-toggle="modal" data-bs-target="#contractMarketingModal">Read details</a>
+                  </div>
+                </div>
+              </div>
               <p class="contract-review-description mb-2">
                 Check each section before confirming your simulated request.
               </p>
@@ -1845,17 +1941,17 @@
                     <dl class="contract-review-list mb-0">
                       <div>
                         <dt>Method</dt>
-                        <dd class="mb-0">Simulated card</dd>
+                        <dd id="reviewPaymentMethod" class="mb-0">Simulated card</dd>
                       </div>
                       <div>
-                        <dt>Cardholder</dt>
-                        <dd id="reviewCardholder" class="mb-0">Not provided</dd>
+                        <dt id="reviewPaymentHolderLabel">Cardholder</dt>
+                        <dd id="reviewPaymentHolder" class="mb-0">Not provided</dd>
                       </div>
                       <div>
-                        <dt>Card number</dt>
-                        <dd id="reviewCardNumber" class="mb-0">Not provided</dd>
+                        <dt id="reviewPaymentIdentifierLabel">Card number</dt>
+                        <dd id="reviewPaymentIdentifier" class="mb-0">Not provided</dd>
                       </div>
-                      <div>
+                      <div id="reviewPaymentExpiryRow">
                         <dt>Expiry date</dt>
                         <dd id="reviewCardExpiry" class="mb-0">Not provided</dd>
                       </div>
@@ -1878,6 +1974,75 @@
           </form>
         </div>
       </section>
+
+      <div class="modal fade" id="contractSuccessModal" tabindex="-1" aria-labelledby="contractSuccessTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content contract-success-modal text-light">
+            <div class="modal-header border-0 px-4 pt-4 pb-2">
+              <h2 class="modal-title fs-4 contract-success-title" id="contractSuccessTitle">Request submitted successfully</h2>
+              <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4 py-3">
+              <p class="mb-2">Your request has been received.</p>
+              <p class="contract-success-detail mb-0">This is a demonstration. No payment will be processed or charged.</p>
+            </div>
+            <div class="modal-footer border-0 px-4 pt-2 pb-4">
+              <button class="btn btn-outline-light" type="button" data-bs-dismiss="modal">Continue browsing</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="contractTermsModal" tabindex="-1" aria-labelledby="contractTermsModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content bg-dark text-light border-secondary">
+            <div class="modal-header">
+              <h2 class="modal-title fs-5" id="contractTermsModalTitle">Sample contract terms</h2>
+              <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p class="mb-0">These terms are for a classroom simulation only. Choosing a plan does not create a contract or charge.</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-outline-light" type="button" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="contractPrivacyModal" tabindex="-1" aria-labelledby="contractPrivacyModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content bg-dark text-light border-secondary">
+            <div class="modal-header">
+              <h2 class="modal-title fs-5" id="contractPrivacyModalTitle">Sample privacy policy</h2>
+              <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p class="mb-0">This is a demonstration of the privacy information for a simulated request. The form is not connected to a backend.</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-outline-light" type="button" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="contractMarketingModal" tabindex="-1" aria-labelledby="contractMarketingModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content bg-dark text-light border-secondary">
+            <div class="modal-header">
+              <h2 class="modal-title fs-5" id="contractMarketingModalTitle">Sample communications</h2>
+              <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p class="mb-0">Marketing messages are optional in this simulation. Leaving this box unchecked does not affect the request.</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-outline-light" type="button" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <section class="content-section workflow-section" id="automation">
         <div class="workflow-intro position-relative overflow-hidden">
